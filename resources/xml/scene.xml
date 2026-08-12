@@ -1,0 +1,24 @@
+<mujoco model="LingLong_L1_V1.4 scene">
+  <compiler angle="radian" meshdir="../meshes/"/>
+
+  <include file="LingLong_L1_V1.4.xml"/>
+
+  <statistic center="0 0 0.9" extent="1.2"/>
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0.9 0.9 0.9"/>
+    <rgba haze="0.15 0.25 0.35 1"/>
+    <global azimuth="-140" elevation="-20"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512"/>
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2"/>
+  </asset>
+
+  <worldbody>
+    <light pos="1 0 3.5" dir="0 0 -1" directional="true"/>
+    <!-- Generic smoke-test contact parameters; training values are not available. -->
+    <geom name="floor" size="200 200 5" type="plane" group="0" material="groundplane" friction="1.2 0.02 0.001"/>
+  </worldbody>
+</mujoco>

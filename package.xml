@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>humanoid_linglong</name>
+  <maintainer email="robot_team@spacemit.com">robot_team</maintainer>
+  <version>0.1.0</version>
+  <description>Humanoid LingLong robot application: config, resources, and policy models</description>
+  <depend>humanoid_common</depend>
+  <depend>whole_body</depend>
+  <export>
+    <build_type>cmake</build_type>
+  </export>
+</package>

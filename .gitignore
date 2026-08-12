@@ -1,0 +1,24 @@
+# --- 编译产物 ---
+build/
+bin/
+lib/
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+
+# --- 模型与大数据 ---
+policy/
+*.onnx
+*.gguf
+*.weights
+*.bin
+*.tar.gz
+*.zip
+
+# --- IDE 与系统 ---
+.vscode/
+.idea/
+.DS_Store
+*.swp

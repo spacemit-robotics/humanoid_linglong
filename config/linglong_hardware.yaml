@@ -1,0 +1,401 @@
+# LingLong L1 V1.4 whole-body runtime configuration.
+# Motor calibration values are specific to this robot instance and must be
+# recalibrated before use on another robot.
+
+schema_version: 2
+whole_body:
+  # 500 Hz hardware control period.
+  cycle_s: 0.002
+  # Initial feedback collection window.
+  startup_feedback_timeout_s: 1.5
+  # Maximum tolerated age for asynchronous CAN and IMU feedback.
+  feedback_timeout_s: 0.04
+  command_timeout_s: 0.1
+  # Opens devices in protocol-disabled state. Only explicit FSM commands may enable motors.
+  startup_mode: disabled
+  allow_actuation: true
+
+  buses:
+    - {name: leg_left, type: socketcan, device: can0, bitrate: 1000000}
+    - {name: leg_right, type: socketcan, device: can1, bitrate: 1000000}
+    - {name: arm_left, type: socketcan, device: can2, bitrate: 1000000}
+    - {name: arm_right, type: socketcan, device: can3, bitrate: 1000000}
+    - {name: head, type: socketcan, device: can4, bitrate: 1000000}
+
+  motors:
+    - name: motor_alias_1
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A10020-P2-24"
+      command_id: 1
+      feedback_id: 1
+      polarity: 1
+      zero_offset: -0.0070572975
+      driver_options: &encos_a10020_p2_24
+        enable_on_init: false
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-18.0, 18.0]
+          torque: [-300.0, 300.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 50.0]
+    - name: motor_alias_2
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A8116-P1-18"
+      command_id: 2
+      feedback_id: 2
+      polarity: 1
+      zero_offset: -0.67235065
+      driver_options: &encos_a8116_p1_18
+        enable_on_init: false
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-18.0, 18.0]
+          torque: [-150.0, 150.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
+    - name: motor_alias_3
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A10020-P1-12"
+      command_id: 3
+      feedback_id: 3
+      polarity: -1
+      zero_offset: 0.008201724
+      driver_options: &encos_a10020_p1_12
+        enable_on_init: false
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-18.0, 18.0]
+          torque: [-150.0, 150.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 50.0]
+    - name: motor_alias_4
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A10020-P1-12"
+      command_id: 4
+      feedback_id: 4
+      polarity: -1
+      zero_offset: -2.0586329
+      driver_options: *encos_a10020_p1_12
+    - name: motor_alias_5
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A8112-P1-18"
+      command_id: 5
+      feedback_id: 5
+      polarity: -1
+      zero_offset: -0.0127794305
+      driver_options: &encos_a8112_p1_18
+        enable_on_init: false
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-18.0, 18.0]
+          torque: [-90.0, 90.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
+    - name: motor_alias_6
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A8112-P1-18"
+      command_id: 6
+      feedback_id: 6
+      polarity: 1
+      zero_offset: -0.014305333
+      driver_options: *encos_a8112_p1_18
+
+    - name: motor_alias_7
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A10020-P2-24"
+      command_id: 1
+      feedback_id: 1
+      polarity: -1
+      zero_offset: 0.0020981156
+      driver_options: *encos_a10020_p2_24
+    - name: motor_alias_8
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A8116-P1-18"
+      command_id: 2
+      feedback_id: 2
+      polarity: 1
+      zero_offset: 0.67235065
+      driver_options: *encos_a8116_p1_18
+    - name: motor_alias_9
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A10020-P1-12"
+      command_id: 3
+      feedback_id: 3
+      polarity: -1
+      zero_offset: 0.0089646755
+      driver_options: *encos_a10020_p1_12
+    - name: motor_alias_10
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A10020-P1-12"
+      command_id: 4
+      feedback_id: 4
+      polarity: 1
+      zero_offset: -1.1148623
+      driver_options: *encos_a10020_p1_12
+    - name: motor_alias_11
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A8112-P1-18"
+      command_id: 5
+      feedback_id: 5
+      polarity: 1
+      zero_offset: -0.0085832
+      driver_options: *encos_a8112_p1_18
+    - name: motor_alias_12
+      driver: drv_can_encos
+      bus: leg_right
+      model: "Encos EC-A8112-P1-18"
+      command_id: 6
+      feedback_id: 6
+      polarity: -1
+      zero_offset: 0.009346151
+      driver_options: *encos_a8112_p1_18
+
+    - name: motor_alias_13
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J6248P-2EC"
+      command_id: 1
+      feedback_id: 17
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: &dm_j6248p_2ec
+        enable_on_init: false
+        feedback_period_us: 1000
+        protocol_limits:
+          position: [-12.566, 12.566]
+          velocity: [-20.0, 20.0]
+          torque: [-120.0, 120.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
+    - name: motor_alias_14
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J6248P-2EC"
+      command_id: 2
+      feedback_id: 18
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j6248p_2ec
+    - name: motor_alias_15
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J4340P-2EC"
+      command_id: 3
+      feedback_id: 19
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: &dm_j4340p_2ec
+        enable_on_init: false
+        feedback_period_us: 1000
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-20.0, 20.0]
+          torque: [-28.0, 28.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
+    - name: motor_alias_16
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J4340P-2EC"
+      command_id: 4
+      feedback_id: 20
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j4340p_2ec
+    - name: motor_alias_17
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J4310-2EC"
+      command_id: 5
+      feedback_id: 21
+      polarity: 1
+      zero_offset: 0.0024
+      driver_options: &dm_j4310_2ec
+        enable_on_init: false
+        feedback_period_us: 1000
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-50.0, 50.0]
+          torque: [-10.0, 10.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
+    - name: motor_alias_18
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J4310-2EC"
+      command_id: 6
+      feedback_id: 22
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: *dm_j4310_2ec
+    - name: motor_alias_19
+      driver: drv_can_dm
+      bus: arm_left
+      model: "Damiao DM-J4310-2EC"
+      command_id: 7
+      feedback_id: 23
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: *dm_j4310_2ec
+
+    - name: motor_alias_20
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J6248P-2EC"
+      command_id: 1
+      feedback_id: 17
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j6248p_2ec
+    - name: motor_alias_21
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J6248P-2EC"
+      command_id: 2
+      feedback_id: 18
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j6248p_2ec
+    - name: motor_alias_22
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J4340P-2EC"
+      command_id: 3
+      feedback_id: 19
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j4340p_2ec
+    - name: motor_alias_23
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J4340P-2EC"
+      command_id: 4
+      feedback_id: 20
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: *dm_j4340p_2ec
+    - name: motor_alias_24
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J4310-2EC"
+      command_id: 5
+      feedback_id: 21
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: *dm_j4310_2ec
+    - name: motor_alias_25
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J4310-2EC"
+      command_id: 6
+      feedback_id: 22
+      polarity: -1
+      zero_offset: 0.0
+      driver_options: *dm_j4310_2ec
+    - name: motor_alias_26
+      driver: drv_can_dm
+      bus: arm_right
+      model: "Damiao DM-J4310-2EC"
+      command_id: 7
+      feedback_id: 23
+      polarity: 1
+      zero_offset: 0.0
+      driver_options: *dm_j4310_2ec
+
+    - name: motor_alias_30
+      driver: drv_can_dm
+      bus: head
+      model: "Damiao DM-J4310-2EC"
+      command_id: 4
+      feedback_id: 20
+      polarity: 1
+      zero_offset: -1.5974288
+      driver_options: *dm_j4310_2ec
+    - name: motor_alias_31
+      driver: drv_can_dm
+      bus: head
+      model: "Damiao DM-J4310-2EC"
+      command_id: 5
+      feedback_id: 21
+      polarity: 1
+      zero_offset: 0.6498436
+      driver_options: *dm_j4310_2ec
+
+  # Order is the SDK/URDF/policy canonical joint order from linglong.yaml.
+  joints:
+    - {name: left_hip_pitch_joint, mapping: direct, motors: [motor_alias_1], position_limit: [-1.570796327, 0.785398163], velocity_limit: 12.8805, torque_limit: 300.0}
+    - {name: left_hip_roll_joint, mapping: direct, motors: [motor_alias_2], position_limit: [-0.34906585, 0.785398163], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 5.0}}
+    - {name: left_hip_yaw_joint, mapping: direct, motors: [motor_alias_3], position_limit: [-2.094395102, 2.138028334], velocity_limit: 14.6608, torque_limit: 130.0}
+    - {name: left_knee_joint, mapping: direct, motors: [motor_alias_4], position_limit: [-0.174532925, 1.902408885], velocity_limit: 14.6608, torque_limit: 150.0}
+    - {name: left_ankle_pitch_joint, mapping: parallel_ankle, motors: [motor_alias_5, motor_alias_6], position_limit: [-0.802851456, 0.602138592], velocity_limit: 16.441, torque_limit: 90.0}
+    - {name: left_ankle_roll_joint, mapping: parallel_ankle, motors: [motor_alias_5, motor_alias_6], position_limit: [-0.52, 0.52], velocity_limit: 16.441, torque_limit: 90.0}
+    - {name: right_hip_pitch_joint, mapping: direct, motors: [motor_alias_7], position_limit: [-1.570796327, 0.785398163], velocity_limit: 12.8805, torque_limit: 300.0}
+    - {name: right_hip_roll_joint, mapping: direct, motors: [motor_alias_8], position_limit: [-0.785398163, 0.34906585], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 5.0}}
+    - {name: right_hip_yaw_joint, mapping: direct, motors: [motor_alias_9], position_limit: [-2.138028334, 2.094395102], velocity_limit: 14.6608, torque_limit: 130.0}
+    - {name: right_knee_joint, mapping: direct, motors: [motor_alias_10], position_limit: [-0.174532925, 1.902408885], velocity_limit: 14.6608, torque_limit: 150.0}
+    - {name: right_ankle_pitch_joint, mapping: parallel_ankle, motors: [motor_alias_11, motor_alias_12], position_limit: [-0.802851456, 0.602138592], velocity_limit: 16.441, torque_limit: 90.0}
+    - {name: right_ankle_roll_joint, mapping: parallel_ankle, motors: [motor_alias_11, motor_alias_12], position_limit: [-0.52, 0.52], velocity_limit: 16.441, torque_limit: 90.0}
+    - {name: head_yaw_joint, mapping: direct, motors: [motor_alias_30], position_limit: [-1.570796327, 1.570796327], velocity_limit: 10.47197551, torque_limit: 10.0}
+    - {name: head_pitch_joint, mapping: direct, motors: [motor_alias_31], position_limit: [-0.785398163, 0.785398163], velocity_limit: 10.47197551, torque_limit: 10.0}
+    - {name: left_shoulder_pitch_joint, mapping: direct, motors: [motor_alias_13], position_limit: [-2.967059728, 2.967059728], velocity_limit: 6.28, torque_limit: 75.0}
+    - {name: left_shoulder_roll_joint, mapping: direct, motors: [motor_alias_14], position_limit: [-0.087266463, 3.054326191], velocity_limit: 6.28, torque_limit: 80.0}
+    - {name: left_shoulder_yaw_joint, mapping: direct, motors: [motor_alias_15], position_limit: [-2.967059728, 2.967059728], velocity_limit: 10.47, torque_limit: 27.0}
+    - {name: left_elbow_joint, mapping: direct, motors: [motor_alias_16], position_limit: [-0.785398163, 1.570796327], velocity_limit: 10.47, torque_limit: 27.0}
+    - {name: left_wrist_roll_joint, mapping: direct, motors: [motor_alias_17], position_limit: [-2.967059728, 2.967059728], velocity_limit: 20.94, torque_limit: 7.0}
+    - {name: left_wrist_pitch_joint, mapping: direct, motors: [motor_alias_18], position_limit: [-1.396263402, 1.396263402], velocity_limit: 20.94, torque_limit: 7.0}
+    - {name: left_wrist_yaw_joint, mapping: direct, motors: [motor_alias_19], position_limit: [-1.396263402, 1.396263402], velocity_limit: 20.943, torque_limit: 7.0}
+    - {name: right_shoulder_pitch_joint, mapping: direct, motors: [motor_alias_20], position_limit: [-2.967059728, 2.967059728], velocity_limit: 6.28, torque_limit: 75.0}
+    - {name: right_shoulder_roll_joint, mapping: direct, motors: [motor_alias_21], position_limit: [-3.054326191, 0.087266463], velocity_limit: 6.28, torque_limit: 80.0}
+    - {name: right_shoulder_yaw_joint, mapping: direct, motors: [motor_alias_22], position_limit: [-2.967059728, 2.967059728], velocity_limit: 10.47, torque_limit: 27.0}
+    - {name: right_elbow_joint, mapping: direct, motors: [motor_alias_23], position_limit: [-0.785398163, 1.570796327], velocity_limit: 10.47, torque_limit: 27.0}
+    - {name: right_wrist_roll_joint, mapping: direct, motors: [motor_alias_24], position_limit: [-2.967059728, 2.967059728], velocity_limit: 20.94, torque_limit: 7.0}
+    - {name: right_wrist_pitch_joint, mapping: direct, motors: [motor_alias_25], position_limit: [-1.396263402, 1.396263402], velocity_limit: 20.94, torque_limit: 7.0}
+    - {name: right_wrist_yaw_joint, mapping: direct, motors: [motor_alias_26], position_limit: [-1.396263402, 1.396263402], velocity_limit: 20.94, torque_limit: 7.0}
+
+  couplings:
+    # Both ankles use the same parallel-linkage orientation.
+    - type: parallel_ankle
+      joints: [left_ankle_pitch_joint, left_ankle_roll_joint]
+      motors: [motor_alias_5, motor_alias_6]
+      ankle_pivots: [[-0.066, 0.03575, 0.0], [-0.066, -0.03575, 0.0]]
+      ball_positions: [[-0.066, 0.046, 0.297], [-0.066, -0.046, 0.186]]
+      motor_positions: [[0.0, 0.046, 0.297], [0.0, -0.046, 0.186]]
+      motor_bias: [0.0, 0.0]
+      motor_limit: 1.5
+      ankle_limit: 1.5
+      motor_difference_limit: 1.3
+      max_iterations: 50
+      squared_tolerance: 1.0e-10
+    - type: parallel_ankle
+      joints: [right_ankle_pitch_joint, right_ankle_roll_joint]
+      motors: [motor_alias_11, motor_alias_12]
+      ankle_pivots: [[-0.066, 0.03575, 0.0], [-0.066, -0.03575, 0.0]]
+      ball_positions: [[-0.066, 0.046, 0.297], [-0.066, -0.046, 0.186]]
+      motor_positions: [[0.0, 0.046, 0.297], [0.0, -0.046, 0.186]]
+      motor_bias: [0.0, 0.0]
+      motor_limit: 1.5
+      ankle_limit: 1.5
+      motor_difference_limit: 1.3
+      max_iterations: 50
+      squared_tolerance: 1.0e-10
+
+  imu:
+    driver: drv_uart_forsense
+    device: /dev/ttyUSB0
+    baud: 460800
+    mounting_matrix: [0.0, 0.9999955, -0.002999996,
+                      -1.0, 0.0, 0.0,
+                      0.0, 0.002999996, 0.9999955]
+    acceleration_bias: [0.0, 0.0, 0.0]
+    gyro_bias: [0.0, 0.0, 0.0]
