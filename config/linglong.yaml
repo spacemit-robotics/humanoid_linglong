@@ -198,9 +198,10 @@ rl_policy:
         max_roll: 0.7
         max_pitch: 0.7
 
-      # 双臂头顶比心：参考前馈手臂轨迹 + RL 平衡。
+      # 双臂头顶比心：标准 28 维全关节动作策略。
       heart_both:
-        # unitree_rl_mjlab 参考前馈双臂 + RL 平衡 actor。
+        # DAgger3 鲁棒蒸馏 actor；参考轨迹只构造观测，不覆盖模型动作。
+        # ONNX SHA256: fe2069238c169a3215e65e7991a17a01f3488e7ad0a35b82ef0a6f69a6b397f2
         model_path: "policy/heart_both/policy.onnx"
         model_io:
           inputs:
@@ -218,12 +219,6 @@ rl_policy:
           anchor_body_index: 0
           anchor_waist_joint_indices: []
           anchor_yaw_align: true
-          # 播放时双臂严格采用参考角；actor 原始输出仍作为下一帧 last_action。
-          reference_action:
-            joint_indices: [14, 15, 16, 17, 18, 19, 20,
-                            21, 22, 23, 24, 25, 26, 27]
-            residual_scale: 0.0
-            residual_clip: 1.0
         action_joint_index: [0, 1, 2, 3, 4, 5,
                              6, 7, 8, 9, 10, 11,
                              12, 13,
@@ -232,8 +227,8 @@ rl_policy:
         action_scale: [0.294642857, 0.15625, 0.216666667, 0.133928571, 0.45, 0.45,
                        0.294642857, 0.15625, 0.216666667, 0.133928571, 0.45, 0.45,
                        0.1, 0.1,
-                       0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2,
-                       0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2]
+                       1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4,
+                       1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4]
         action_blend_ratio: 1.0
         infer_decimation: 1
         rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
