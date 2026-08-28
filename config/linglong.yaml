@@ -124,8 +124,8 @@ rl_policy:
   # Policy inference period.
   rl_dt: 0.02
   onnx_infer:
-    policy_names: [wave_hello, heart_both, walk, walk_mjlab_4050]
-    default_policy: "walk_mjlab_4050"
+    policy_names: [wave_hello, heart_both, walk, walk_mjlab]
+    default_policy: "walk_mjlab"
     policies:
       wave_hello:
         # unitree_rl_mjlab LingLong motion tracking actor：单帧 149 维观测、28 维动作。
@@ -273,14 +273,14 @@ rl_policy:
         max_roll: 0.7
         max_pitch: 0.7
 
-      walk_mjlab_4050:
+      walk_mjlab:
         # model_4050: 28D MLP locomotion actor with arm-only smoothing fine-tune.
         # Checkpoint SHA256: 748d28be253ec8b48dc06776f68a94ae74357077fbb25aa86958d01abdcfcf63
         # Raw actor SHA256: f4f5e40c2d957159d1e1406ff99bf478c18cc60e1eaf431dea59de4bf09b8bf6
         # Deployment ONNX SHA256: 11b9021d9968bc9742403629827b999d6ecfefa4822c0da39c98e7779482bb87
         # The deployment ONNX gates phase to zero at zero command and compensates
         # the SDK's one-tick phase advance before inference.
-        model_path: "policy/walk_mjlab_4050/policy.onnx"
+        model_path: "policy/walk_mjlab/policy.onnx"
         model_io:
           inputs:
             - {name: obs, source: observation}
