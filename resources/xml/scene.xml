@@ -18,7 +18,7 @@
 
   <worldbody>
     <light pos="1 0 3.5" dir="0 0 -1" directional="true"/>
-    <!-- Generic smoke-test contact parameters; training values are not available. -->
-    <geom name="floor" size="200 200 5" type="plane" group="0" material="groundplane" friction="1.2 0.02 0.001"/>
+    <!-- Ground friction matches the locomotion training contact parameters. -->
+    <geom name="floor" size="200 200 5" type="plane" group="0" material="groundplane" friction="0.6 0.005 0.0001"/>
   </worldbody>
 </mujoco>

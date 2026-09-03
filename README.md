@@ -12,8 +12,7 @@
 - PC 单机仿真（SHM 或 UDP 本机通信）
 - sim2sim 跨机推理（PC 仿真 + K3 板卡 RL 推理）
 - K3 板卡实机控制（28 轴电机、并联脚踝和 Forsense IMU）
-- walk_mjlab 基础运控策略（当前默认），以及 walk、wave_hello、heart_both
-  三套既有策略
+- walk_mjlab、walk、wave_hello、heart_both 四套预训练 RL 策略
 
 不支持：
 - 在线训练或策略更新
@@ -71,13 +70,9 @@ m
 download_models_linglong.sh
 ```
 
-默认行走策略为 `walk_mjlab`，当前部署模型为 model_4050。其输入为 95 维观测，输出为
-灵龙 28 个关节的目标动作；配置保留 `walk` 作为原厂行走策略回退。
-
 ### 运行示例
 
-默认配置使用 `whole_body` 实机后端。进行 MuJoCo 仿真前，将
-`config/linglong.yaml` 切换为：
+进行 MuJoCo 仿真前，确认 `config/linglong.yaml` 使用：
 
 ```yaml
 driver:
