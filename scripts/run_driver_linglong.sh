@@ -1,6 +1,5 @@
 #!/bin/bash
 # driver_runtime 按 linglong.yaml 的 driver.backend 选择 MuJoCo 或 whole_body。
-# 当前配置默认 whole_body，启动后初始保持失能；离线仿真需显式切换为 mujoco。
 SCRIPT_PATH=$(readlink -f "$0")
 : "${SDK_ROOT:=$(cd "$(dirname "$SCRIPT_PATH")/../../.." && pwd)}"
 CONFIG="$SDK_ROOT/application/native/humanoid_linglong/config/linglong.yaml"

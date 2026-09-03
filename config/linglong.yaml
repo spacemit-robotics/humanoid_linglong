@@ -92,7 +92,7 @@ behavior_manager:
   # HOME transition settings.
   home:
     gain_ramp_duration: 1.0
-    move_duration: 6.0
+    move_duration: 3.0
     kp: [70, 60, 37.5, 70, 12.5, 12.5,
          70, 60, 37.5, 70, 12.5, 12.5,
          20, 20,
@@ -105,7 +105,10 @@ behavior_manager:
          1.5, 1.5, 1.5, 1.5, 1, 1, 1]
   # ZERO moves to the current policy's preparation pose with hardware-tested gains.
   zero:
-    move_duration: 2.0
+    move_duration: 3.0
+    position_tolerance: 0.15
+    velocity_tolerance: 0.10
+    settle_duration: 0.20
     kp: [70, 60, 37.5, 70, 12.5, 12.5,
          70, 60, 37.5, 70, 12.5, 12.5,
          20, 20,
@@ -156,6 +159,7 @@ rl_policy:
                        0.1, 0.1,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2]
+        entry_target_transition_duration: 1.0
         action_blend_ratio: 1.0
         infer_decimation: 1
         rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
@@ -229,6 +233,7 @@ rl_policy:
                        0.1, 0.1,
                        1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4,
                        1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4]
+        entry_target_transition_duration: 1.0
         action_blend_ratio: 1.0
         infer_decimation: 1
         rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
@@ -274,12 +279,6 @@ rl_policy:
         max_pitch: 0.7
 
       walk_mjlab:
-        # model_4050: 28D MLP locomotion actor with arm-only smoothing fine-tune.
-        # Checkpoint SHA256: 748d28be253ec8b48dc06776f68a94ae74357077fbb25aa86958d01abdcfcf63
-        # Raw actor SHA256: f4f5e40c2d957159d1e1406ff99bf478c18cc60e1eaf431dea59de4bf09b8bf6
-        # Deployment ONNX SHA256: 11b9021d9968bc9742403629827b999d6ecfefa4822c0da39c98e7779482bb87
-        # The deployment ONNX gates phase to zero at zero command and compensates
-        # the SDK's one-tick phase advance before inference.
         model_path: "policy/walk_mjlab/policy.onnx"
         model_io:
           inputs:
@@ -296,6 +295,14 @@ rl_policy:
                        0.1, 0.1,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2]
+        # Per-joint bounds for the position targets accepted by whole_body.
+        clip_actions: [3.344042, 2.233381, 9.665977, 4.886433, 2.710889, 3.333111,
+                       3.344042, 2.233381, 9.665977, 4.886433, 2.710889, 3.333111,
+                       15.706963, 7.852982,
+                       5.633919, 0.674333, 5.933919, 0.841393,
+                       14.834799, 6.980817, 6.980817,
+                       5.633919, 0.674333, 5.933919, 0.841393,
+                       14.834799, 6.980817, 6.980817]
         entry_target_transition_duration: 1.0
         action_blend_ratio: 1.0
         infer_decimation: 1
@@ -332,10 +339,12 @@ rl_policy:
         command:
           scale: [1.0, 1.0, 1.0]
           init: [0.0, 0.0, 0.0]
-          # Keep the first SDK test inside the currently validated basic range.
           limits:
-            max_vx: 0.3
+            min_vx: -0.3
+            max_vx: 1.0
+            min_vy: -0.25
             max_vy: 0.25
+            min_wz: -0.5
             max_wz: 0.5
         max_roll: 0.7
         max_pitch: 0.7
