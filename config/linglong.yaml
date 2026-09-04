@@ -68,6 +68,8 @@ logging:
   telemetry:
     enabled: true
     rate_hz: 20
+    control_rate_hz: 50
+    hardware_rate_hz: 100
   driver_monitor:
     enabled: true
     rate_hz: 2
