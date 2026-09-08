@@ -11,6 +11,8 @@ whole_body:
   # Maximum tolerated age for asynchronous CAN and IMU feedback.
   feedback_timeout_s: 0.04
   command_timeout_s: 0.1
+  # All LingLong CAN drivers provide host-monotonic receive timestamps.
+  require_motor_receive_timestamps: true
   # Opens devices in protocol-disabled state. Only explicit FSM commands may enable motors.
   startup_mode: disabled
   allow_actuation: true
@@ -31,6 +33,11 @@ whole_body:
       feedback_id: 1
       polarity: 1
       zero_offset: -0.0070572975
+      non_fatal_error_codes: [0x04]
+      command_limits: &encos_a10020_p2_24_command_limits
+        kp_max: 500.0
+        kd_max: 50.0
+        estimated_torque_max: 300.0
       driver_options: &encos_a10020_p2_24
         enable_on_init: false
         protocol_limits:
@@ -47,6 +54,11 @@ whole_body:
       feedback_id: 2
       polarity: 1
       zero_offset: -0.67235065
+      non_fatal_error_codes: [0x04]
+      command_limits: &encos_a8116_p1_18_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 150.0
       driver_options: &encos_a8116_p1_18
         enable_on_init: false
         protocol_limits:
@@ -63,6 +75,11 @@ whole_body:
       feedback_id: 3
       polarity: -1
       zero_offset: 0.008201724
+      non_fatal_error_codes: [0x04]
+      command_limits: &encos_a10020_p1_12_command_limits
+        kp_max: 500.0
+        kd_max: 50.0
+        estimated_torque_max: 150.0
       driver_options: &encos_a10020_p1_12
         enable_on_init: false
         protocol_limits:
@@ -79,6 +96,8 @@ whole_body:
       feedback_id: 4
       polarity: -1
       zero_offset: -2.0586329
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
     - name: motor_alias_5
       driver: drv_can_encos
@@ -88,6 +107,11 @@ whole_body:
       feedback_id: 5
       polarity: -1
       zero_offset: -0.0127794305
+      non_fatal_error_codes: [0x04]
+      command_limits: &encos_a8112_p1_18_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 90.0
       driver_options: &encos_a8112_p1_18
         enable_on_init: false
         protocol_limits:
@@ -104,6 +128,8 @@ whole_body:
       feedback_id: 6
       polarity: 1
       zero_offset: -0.014305333
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
 
     - name: motor_alias_7
@@ -114,6 +140,8 @@ whole_body:
       feedback_id: 1
       polarity: -1
       zero_offset: 0.0020981156
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a10020_p2_24_command_limits
       driver_options: *encos_a10020_p2_24
     - name: motor_alias_8
       driver: drv_can_encos
@@ -123,6 +151,8 @@ whole_body:
       feedback_id: 2
       polarity: 1
       zero_offset: 0.67235065
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a8116_p1_18_command_limits
       driver_options: *encos_a8116_p1_18
     - name: motor_alias_9
       driver: drv_can_encos
@@ -132,6 +162,8 @@ whole_body:
       feedback_id: 3
       polarity: -1
       zero_offset: 0.0089646755
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
     - name: motor_alias_10
       driver: drv_can_encos
@@ -141,6 +173,8 @@ whole_body:
       feedback_id: 4
       polarity: 1
       zero_offset: -1.1148623
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
     - name: motor_alias_11
       driver: drv_can_encos
@@ -150,6 +184,8 @@ whole_body:
       feedback_id: 5
       polarity: 1
       zero_offset: -0.0085832
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
     - name: motor_alias_12
       driver: drv_can_encos
@@ -159,6 +195,8 @@ whole_body:
       feedback_id: 6
       polarity: -1
       zero_offset: 0.009346151
+      non_fatal_error_codes: [0x04]
+      command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
 
     - name: motor_alias_13
@@ -169,6 +207,10 @@ whole_body:
       feedback_id: 17
       polarity: 1
       zero_offset: 0.0
+      command_limits: &dm_j6248p_2ec_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 120.0
       driver_options: &dm_j6248p_2ec
         enable_on_init: false
         feedback_period_us: 1000
@@ -186,6 +228,7 @@ whole_body:
       feedback_id: 18
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j6248p_2ec_command_limits
       driver_options: *dm_j6248p_2ec
     - name: motor_alias_15
       driver: drv_can_dm
@@ -195,6 +238,10 @@ whole_body:
       feedback_id: 19
       polarity: -1
       zero_offset: 0.0
+      command_limits: &dm_j4340p_2ec_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 28.0
       driver_options: &dm_j4340p_2ec
         enable_on_init: false
         feedback_period_us: 1000
@@ -212,6 +259,7 @@ whole_body:
       feedback_id: 20
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j4340p_2ec_command_limits
       driver_options: *dm_j4340p_2ec
     - name: motor_alias_17
       driver: drv_can_dm
@@ -221,6 +269,10 @@ whole_body:
       feedback_id: 21
       polarity: 1
       zero_offset: 0.0024
+      command_limits: &dm_j4310_2ec_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 10.0
       driver_options: &dm_j4310_2ec
         enable_on_init: false
         feedback_period_us: 1000
@@ -238,6 +290,7 @@ whole_body:
       feedback_id: 22
       polarity: 1
       zero_offset: 0.0
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
     - name: motor_alias_19
       driver: drv_can_dm
@@ -247,6 +300,7 @@ whole_body:
       feedback_id: 23
       polarity: 1
       zero_offset: 0.0
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
 
     - name: motor_alias_20
@@ -257,6 +311,7 @@ whole_body:
       feedback_id: 17
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j6248p_2ec_command_limits
       driver_options: *dm_j6248p_2ec
     - name: motor_alias_21
       driver: drv_can_dm
@@ -266,6 +321,7 @@ whole_body:
       feedback_id: 18
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j6248p_2ec_command_limits
       driver_options: *dm_j6248p_2ec
     - name: motor_alias_22
       driver: drv_can_dm
@@ -275,6 +331,7 @@ whole_body:
       feedback_id: 19
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j4340p_2ec_command_limits
       driver_options: *dm_j4340p_2ec
     - name: motor_alias_23
       driver: drv_can_dm
@@ -284,6 +341,7 @@ whole_body:
       feedback_id: 20
       polarity: 1
       zero_offset: 0.0
+      command_limits: *dm_j4340p_2ec_command_limits
       driver_options: *dm_j4340p_2ec
     - name: motor_alias_24
       driver: drv_can_dm
@@ -293,6 +351,7 @@ whole_body:
       feedback_id: 21
       polarity: 1
       zero_offset: 0.0
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
     - name: motor_alias_25
       driver: drv_can_dm
@@ -302,6 +361,7 @@ whole_body:
       feedback_id: 22
       polarity: -1
       zero_offset: 0.0
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
     - name: motor_alias_26
       driver: drv_can_dm
@@ -311,6 +371,7 @@ whole_body:
       feedback_id: 23
       polarity: 1
       zero_offset: 0.0
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
 
     - name: motor_alias_30
@@ -321,6 +382,7 @@ whole_body:
       feedback_id: 20
       polarity: 1
       zero_offset: -1.5974288
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
     - name: motor_alias_31
       driver: drv_can_dm
@@ -330,6 +392,7 @@ whole_body:
       feedback_id: 21
       polarity: 1
       zero_offset: 0.6498436
+      command_limits: *dm_j4310_2ec_command_limits
       driver_options: *dm_j4310_2ec
 
   # Order is the SDK/URDF/policy canonical joint order from linglong.yaml.
@@ -377,6 +440,10 @@ whole_body:
       motor_difference_limit: 1.3
       max_iterations: 50
       squared_tolerance: 1.0e-10
+      # The configured joint rectangle peaks near condition=2.15 and
+      # torque_amplification=1.47; these limits retain about 10% margin.
+      jacobian_condition_limit: 2.4
+      torque_amplification_limit: 1.65
     - type: parallel_ankle
       joints: [right_ankle_pitch_joint, right_ankle_roll_joint]
       motors: [motor_alias_11, motor_alias_12]
@@ -389,6 +456,9 @@ whole_body:
       motor_difference_limit: 1.3
       max_iterations: 50
       squared_tolerance: 1.0e-10
+      # Same geometry and joint limits as the left ankle.
+      jacobian_condition_limit: 2.4
+      torque_amplification_limit: 1.65
 
   imu:
     driver: drv_uart_forsense

@@ -50,7 +50,7 @@ robot_base:
 # LingLong targets the physical robot by default. Select mujoco explicitly for
 # offline simulation.
 driver:
-  backend: mujoco
+  backend: whole_body
 
 whole_body:
   config_file: "linglong_hardware.yaml"
@@ -62,14 +62,20 @@ logging:
     enabled: true
   file:
     enabled: true
-    max_size_mb: 32
-    max_files: 3
+    max_size_mb: 128
+    max_files: 8
   queue_capacity: 8192
+  artifacts:
+    - "linglong_hardware.yaml"
+    - "../resources/urdf/LingLong_L1_V1.4.urdf"
+    - "../resources/xml/LingLong_L1_V1.4.xml"
+    - "../resources/xml/scene.xml"
   telemetry:
     enabled: true
     rate_hz: 20
     control_rate_hz: 50
     hardware_rate_hz: 100
+    timing_window_s: 5
   driver_monitor:
     enabled: true
     rate_hz: 2
@@ -85,6 +91,18 @@ simulation:
     sim_dt: 0.001
 
 behavior_manager:
+  safety:
+    # Driver states normally arrive every 2 ms; 50 ms tolerates transient jitter.
+    driver_state_timeout_s: 0.05
+    max_roll: 0.7
+    max_pitch: 0.7
+    # Ramp down finite gains before disabling; invalid feedback bypasses the ramp.
+    release_duration_s: 1.0
+  rl_safety:
+    # The policy period is 20 ms. A stale action may survive at most three periods.
+    first_action_timeout_s: 0.20
+    max_action_age_s: 0.06
+    inference_deadline_s: 0.02
   # DAMP-state damping gains.
   damp_kd: [2.8, 2.4, 1.0, 2.8, 1.0, 1.0,
             2.8, 2.4, 1.0, 2.8, 1.0, 1.0,
