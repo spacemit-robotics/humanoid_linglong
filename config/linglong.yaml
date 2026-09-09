@@ -126,7 +126,7 @@ behavior_manager:
   # ZERO moves to the current policy's preparation pose with hardware-tested gains.
   zero:
     move_duration: 3.0
-    position_tolerance: 0.15
+    position_tolerance: 0.25
     velocity_tolerance: 0.10
     settle_duration: 0.20
     kp: [70, 60, 37.5, 70, 12.5, 12.5,
@@ -300,6 +300,8 @@ rl_policy:
 
       walk_mjlab:
         model_path: "policy/walk_mjlab/policy.onnx"
+        runtime:
+          provider: cpu
         model_io:
           inputs:
             - {name: obs, source: observation}
@@ -315,14 +317,8 @@ rl_policy:
                        0.1, 0.1,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2,
                        0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2]
-        # Per-joint bounds for the position targets accepted by whole_body.
-        clip_actions: [3.344042, 2.233381, 9.665977, 4.886433, 2.710889, 3.333111,
-                       3.344042, 2.233381, 9.665977, 4.886433, 2.710889, 3.333111,
-                       15.706963, 7.852982,
-                       5.633919, 0.674333, 5.933919, 0.841393,
-                       14.834799, 6.980817, 6.980817,
-                       5.633919, 0.674333, 5.933919, 0.841393,
-                       14.834799, 6.980817, 6.980817]
+        clip_actions: []
+        clip_observations: []
         entry_target_transition_duration: 1.0
         action_blend_ratio: 1.0
         infer_decimation: 1
@@ -347,9 +343,13 @@ rl_policy:
              3, 1.5, 1.5, 5, 1, 1, 1,
              3, 1.5, 1.5, 5, 1, 1, 1]
         observation:
-          # 3 + 3 + 3 + 2 + 28 + 28 + 28 = 95.
+          # 95 values per frame; ten frames grouped by observation term.
           segment_0_terms: [ang_vel, projected_gravity, command, phase,
                             dof_pos, dof_vel, last_action]
+          segment_0_mode: flat_history
+          segment_0_length: 10
+          segment_0_order: oldest_first
+          segment_0_include_current: true
           strict_dim_check: true
           ang_vel_scale: 1.0
           dof_pos_scale: 1.0
