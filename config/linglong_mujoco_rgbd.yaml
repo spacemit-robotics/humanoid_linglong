@@ -84,11 +84,11 @@ simulation:
 
 behavior_manager:
   # DAMP-state damping gains.
-  damp_kd: [2.8, 2.4, 1.0, 2.8, 1.0, 1.0,
-            2.8, 2.4, 1.0, 2.8, 1.0, 1.0,
-            0.3, 0.3,
-            0.6, 0.3, 0.3, 1.0, 0.2, 0.2, 0.2,
-            0.6, 0.3, 0.3, 1.0, 0.2, 0.2, 0.2]
+  damp_kd: [7.0, 5.0, 2.5, 7.0, 2.5, 2.5,
+            7.0, 5.0, 2.5, 7.0, 2.5, 2.5,
+            0.6, 0.6,
+            1.2, 0.6, 0.6, 2.0, 0.4, 0.4, 0.4,
+            1.2, 0.6, 0.6, 2.0, 0.4, 0.4, 0.4]
   # HOME transition settings.
   home:
     gain_ramp_duration: 1.0
@@ -103,16 +103,16 @@ behavior_manager:
          0.1, 0.1,
          1.5, 1.5, 1.5, 1.5, 1, 1, 1,
          1.5, 1.5, 1.5, 1.5, 1, 1, 1]
-  # ZERO moves to the current policy's preparation pose with hardware-tested gains.
+  # ZERO uses independent support gains for the current policy's preparation pose.
   zero:
     move_duration: 2.0
-    kp: [70, 60, 37.5, 70, 12.5, 12.5,
-         70, 60, 37.5, 70, 12.5, 12.5,
+    kp: [140, 120, 50, 140, 50, 25,
+         140, 120, 50, 140, 50, 25,
          20, 20,
          150, 150, 50, 50, 20, 20, 20,
          150, 150, 50, 50, 20, 20, 20]
-    kd: [3.5, 1.25, 2.5, 3.5, 1.25, 1.25,
-         3.5, 1.25, 2.5, 3.5, 1.25, 1.25,
+    kd: [7, 5, 2.5, 7, 2.5, 2.5,
+         7, 5, 2.5, 7, 2.5, 2.5,
          0.1, 0.1,
          1.5, 1.5, 1.5, 1.5, 1, 1, 1,
          1.5, 1.5, 1.5, 1.5, 1, 1, 1]
@@ -200,9 +200,11 @@ rl_policy:
 
       # 双臂头顶比心：标准 28 维全关节动作策略。
       heart_both:
-        # DAgger3 鲁棒蒸馏 actor；参考轨迹只构造观测，不覆盖模型动作。
-        # ONNX SHA256: fe2069238c169a3215e65e7991a17a01f3488e7ad0a35b82ef0a6f69a6b397f2
+        # R2 PPO 仿真候选；4 帧历史，参考轨迹只构造观测，不覆盖动作。
+        # Foot80 使用 policy_foot80.onnx；History16 使用 policy_history16.onnx 并将历史长度改为 16。
         model_path: "policy/heart_both/policy.onnx"
+        runtime:
+          provider: cpu
         model_io:
           inputs:
             - {name: obs, source: observation}
@@ -215,7 +217,7 @@ rl_policy:
           # 参考文件已离线降至原动作的 0.3 倍速，运行时不再重复减速。
           playback_speed: 1.0
           loop: true
-          loop_pause: 1.0
+          loop_pause: 0.0
           anchor_body_index: 0
           anchor_waist_joint_indices: []
           anchor_yaw_align: true
@@ -229,6 +231,9 @@ rl_policy:
                        0.1, 0.1,
                        1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4,
                        1.0, 1.0, 1.0, 1.0, 0.4, 0.4, 0.4]
+        clip_actions: []
+        clip_observations: []
+        entry_target_transition_duration: 0.0
         action_blend_ratio: 1.0
         infer_decimation: 1
         rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
@@ -259,9 +264,13 @@ rl_policy:
           motion_anchor_pos_b: 3
           motion_anchor_ori_b: 6
         observation:
-          # 56 + 6 + 3 + 28 + 28 + 28 = 149。
+          # 每帧 149 维；按观测项拼接 4 帧，旧到新、包含当前帧，输入共 596 维。
           segment_0_terms: [motion_command, motion_anchor_ori_b,
                             ang_vel, dof_pos, dof_vel, last_action]
+          segment_0_mode: flat_history
+          segment_0_length: 4
+          segment_0_order: oldest_first
+          segment_0_include_current: true
           strict_dim_check: true
           ang_vel_scale: 1.0
           dof_pos_scale: 1.0
