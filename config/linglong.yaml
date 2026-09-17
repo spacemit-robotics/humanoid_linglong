@@ -142,14 +142,164 @@ behavior_manager:
   # whole_body 实机控制周期为 2 ms（500 Hz）。
   control_dt: 0.002
 
+# Interaction trajectories override only the declared joints while the active
+# standing policy continues to control the complete robot.
+upper_body_actions:
+  action_names: [wave_hello, wave_under_head, wave_above_head,
+                 heart_both, heart_left, heart_right,
+                 shake_hand, shake_hand_left,
+                 blow_kiss_with_left_hand,
+                 blow_kiss_with_right_hand, blow_kiss_with_both_hands,
+                 hug, high_five, right_hand_up, both_hands_up,
+                 box_left_hand_win, right_hand_on_heart, ultraman_ray]
+  motion_fps: 50
+  playback_speed: 1.0
+  hold_last_frame: false
+  blend_in_duration: 0.25
+  blend_out_duration: 0.25
+  arm_joint_indices: &arm_joint_indices [14, 15, 16, 17, 18, 19, 20,
+                                         21, 22, 23, 24, 25, 26, 27]
+  actions:
+    wave_hello:
+      {file: "policy/stand_mjlab/interactions/wave_hello.npz",
+       joint_indices: *arm_joint_indices, display_name: "挥手"}
+    wave_under_head:
+      {file: "policy/stand_mjlab/interactions/wave_under_head.npz",
+       joint_indices: *arm_joint_indices, display_name: "胸前挥手"}
+    wave_above_head:
+      {file: "policy/stand_mjlab/interactions/wave_above_head.npz",
+       joint_indices: *arm_joint_indices, display_name: "高举挥手"}
+    heart_both:
+      {file: "policy/stand_mjlab/interactions/heart_both.npz",
+       joint_indices: *arm_joint_indices, display_name: "比心"}
+    heart_left:
+      {file: "policy/stand_mjlab/interactions/heart_left.npz",
+       joint_indices: *arm_joint_indices, display_name: "左手比心"}
+    heart_right:
+      {file: "policy/stand_mjlab/interactions/heart_right.npz",
+       joint_indices: *arm_joint_indices, display_name: "右手比心"}
+    shake_hand:
+      {file: "policy/stand_mjlab/interactions/shake_hand.npz",
+       joint_indices: *arm_joint_indices, display_name: "右手握手"}
+    shake_hand_left:
+      {file: "policy/stand_mjlab/interactions/shake_hand_left.npz",
+       joint_indices: *arm_joint_indices, display_name: "左手握手"}
+    blow_kiss_with_left_hand:
+      {file: "policy/stand_mjlab/interactions/blow_kiss_with_left_hand.npz",
+       joint_indices: *arm_joint_indices, display_name: "左手飞吻"}
+    blow_kiss_with_right_hand:
+      {file: "policy/stand_mjlab/interactions/blow_kiss_with_right_hand.npz",
+       joint_indices: *arm_joint_indices, display_name: "右手飞吻"}
+    blow_kiss_with_both_hands:
+      {file: "policy/stand_mjlab/interactions/blow_kiss_with_both_hands.npz",
+       joint_indices: *arm_joint_indices, display_name: "双手飞吻"}
+    hug:
+      {file: "policy/stand_mjlab/interactions/hug.npz",
+       joint_indices: *arm_joint_indices, display_name: "欢迎"}
+    high_five:
+      {file: "policy/stand_mjlab/interactions/high_five.npz",
+       joint_indices: *arm_joint_indices, display_name: "击掌"}
+    right_hand_up:
+      {file: "policy/stand_mjlab/interactions/right_hand_up.npz",
+       joint_indices: *arm_joint_indices, display_name: "右手摊手"}
+    both_hands_up:
+      {file: "policy/stand_mjlab/interactions/both_hands_up.npz",
+       joint_indices: *arm_joint_indices, display_name: "双手摊手"}
+    box_left_hand_win:
+      {file: "policy/stand_mjlab/interactions/box_left_hand_win.npz",
+       joint_indices: *arm_joint_indices, display_name: "胜利庆祝"}
+    right_hand_on_heart:
+      {file: "policy/stand_mjlab/interactions/right_hand_on_heart.npz",
+       joint_indices: *arm_joint_indices, display_name: "抚胸致意"}
+    ultraman_ray:
+      {file: "policy/stand_mjlab/interactions/ultraman_ray.npz",
+       joint_indices: *arm_joint_indices, display_name: "奥特曼光线"}
+
 rl_policy:
   type: "onnx_infer"
   # Policy inference period.
   rl_dt: 0.02
   onnx_infer:
-    policy_names: [wave_hello, heart_both, walk, walk_mjlab, show_bicep_both, victory_both]
-    default_policy: "walk_mjlab"
+    policy_names: [wave_hello, heart_both, walk, walk_mjlab,
+                   show_bicep_both, victory_both, stand_mjlab]
+    default_policy: "stand_mjlab"
     policies:
+      stand_mjlab:
+        model_path: "policy/stand_mjlab/policy.onnx"
+        policy_adapter:
+          type: joint_trajectory
+          catalog: upper_body_actions
+          applied_action_term: applied_action
+        runtime:
+          provider: cpu
+        model_io:
+          inputs:
+            - {name: obs, source: observation}
+          outputs:
+            - {name: actions, target: action}
+        action_joint_index: [0, 1, 2, 3, 4, 5,
+                             6, 7, 8, 9, 10, 11,
+                             12, 13,
+                             14, 15, 16, 17, 18, 19, 20,
+                             21, 22, 23, 24, 25, 26, 27]
+        action_scale: [0.294642857, 0.15625, 0.216666667, 0.133928571, 0.45, 0.45,
+                       0.294642857, 0.15625, 0.216666667, 0.133928571, 0.45, 0.45,
+                       0.1, 0.1,
+                       0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2,
+                       0.5, 0.5, 0.5, 0.5, 0.2, 0.2, 0.2]
+        clip_actions: []
+        clip_observations: []
+        entry_target_transition_duration: 0.0
+        action_blend_ratio: 1.0
+        infer_decimation: 1
+        rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                         -0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                         0.0, 0.0,
+                         0.15, 0.25, 0.0, 1.15, 0.0, 0.0, 0.0,
+                         0.15, -0.25, 0.0, 1.15, 0.0, 0.0, 0.0]
+        zero_target_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                          -0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                          0.0, 0.0,
+                          0.15, 0.25, 0.0, 1.15, 0.0, 0.0, 0.0,
+                          0.15, -0.25, 0.0, 1.15, 0.0, 0.0, 0.0]
+        kp: [280, 240, 100, 280, 100, 50,
+             280, 240, 100, 280, 100, 50,
+             80, 80,
+             150, 50, 50, 30, 10, 10, 10,
+             150, 50, 50, 30, 10, 10, 10]
+        kd: [14, 12, 5, 14, 5, 5,
+             14, 12, 5, 14, 5, 5,
+             1.5, 1.5,
+             3, 1.5, 1.5, 5, 1, 1, 1,
+             3, 1.5, 1.5, 5, 1, 1, 1]
+        custom_array_dims:
+          applied_action: 28
+        observation:
+          # 93 values per frame; ten frames grouped by observation term.
+          segment_0_terms: [ang_vel, projected_gravity, command,
+                            dof_pos, dof_vel, applied_action]
+          segment_0_mode: flat_history
+          segment_0_length: 10
+          segment_0_order: oldest_first
+          segment_0_include_current: true
+          strict_dim_check: true
+          ang_vel_scale: 0.25
+          dof_pos_scale: 1.0
+          dof_vel_scale: 0.05
+          dof_pos_subtract_default: true
+        command:
+          scale: [1.0, 1.0, 1.0]
+          init: [0.0, 0.0, 0.0]
+          limits:
+            min_vx: 0.0
+            max_vx: 0.0
+            min_vy: 0.0
+            max_vy: 0.0
+            min_wz: 0.0
+            max_wz: 0.0
+        max_roll: 0.7
+        max_pitch: 0.7
+
       show_bicep_both:
         # 左右炫耀手臂全身动作跟踪策略。
         model_path: "policy/show_bicep_both/policy.onnx"
