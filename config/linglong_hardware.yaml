@@ -33,6 +33,7 @@ whole_body:
       feedback_id: 1
       polarity: 1
       zero_offset: -0.0070572975
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: &encos_a10020_p2_24_command_limits
         kp_max: 500.0
@@ -54,6 +55,7 @@ whole_body:
       feedback_id: 2
       polarity: 1
       zero_offset: -0.67235065
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: &encos_a8116_p1_18_command_limits
         kp_max: 500.0
@@ -75,6 +77,7 @@ whole_body:
       feedback_id: 3
       polarity: -1
       zero_offset: 0.008201724
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: &encos_a10020_p1_12_command_limits
         kp_max: 500.0
@@ -96,6 +99,7 @@ whole_body:
       feedback_id: 4
       polarity: -1
       zero_offset: -2.0586329
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
@@ -107,6 +111,7 @@ whole_body:
       feedback_id: 5
       polarity: -1
       zero_offset: -0.0127794305
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: &encos_a8112_p1_18_command_limits
         kp_max: 500.0
@@ -128,6 +133,7 @@ whole_body:
       feedback_id: 6
       polarity: 1
       zero_offset: -0.014305333
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
@@ -140,6 +146,7 @@ whole_body:
       feedback_id: 1
       polarity: -1
       zero_offset: 0.0020981156
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a10020_p2_24_command_limits
       driver_options: *encos_a10020_p2_24
@@ -151,6 +158,7 @@ whole_body:
       feedback_id: 2
       polarity: 1
       zero_offset: 0.67235065
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a8116_p1_18_command_limits
       driver_options: *encos_a8116_p1_18
@@ -162,6 +170,7 @@ whole_body:
       feedback_id: 3
       polarity: -1
       zero_offset: 0.0089646755
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
@@ -173,6 +182,7 @@ whole_body:
       feedback_id: 4
       polarity: 1
       zero_offset: -1.1148623
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a10020_p1_12_command_limits
       driver_options: *encos_a10020_p1_12
@@ -184,6 +194,7 @@ whole_body:
       feedback_id: 5
       polarity: 1
       zero_offset: -0.0085832
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
@@ -195,6 +206,7 @@ whole_body:
       feedback_id: 6
       polarity: -1
       zero_offset: 0.009346151
+      position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: *encos_a8112_p1_18_command_limits
       driver_options: *encos_a8112_p1_18
