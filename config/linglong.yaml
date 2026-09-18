@@ -215,13 +215,49 @@ upper_body_actions:
       {file: "policy/stand_mjlab/interactions/ultraman_ray.npz",
        joint_indices: *arm_joint_indices, display_name: "奥特曼光线"}
 
+# SONIC keeps full-body control inside one RL policy. This catalog only switches
+# the reference sequence sent to the policy; it never overrides joint actions.
+sonic_actions:
+  action_names: [body_check, chefs_kiss, clap, hang_loose, point_laugh,
+                 point_laugh_high, point_laugh_low, wave_two_hands]
+  default_action: chefs_kiss
+  transition_duration: 1.0
+  motion_fps: 50
+  playback_speed: 1.0
+  loop: false
+  actions:
+    body_check:
+      {file: "policy/sonic/body_check_001__A123",
+       display_name: "身体碰撞"}
+    chefs_kiss:
+      {file: "policy/sonic/chefs_kiss_R_003__A269_slow2x_lean_back15_decay4",
+       display_name: "飞吻"}
+    clap:
+      {file: "policy/sonic/clap_forced_001__A123_M",
+       display_name: "鼓掌"}
+    hang_loose:
+      {file: "policy/sonic/dance_hang_loose_celebration_003__A467",
+       display_name: "庆祝舞蹈"}
+    point_laugh:
+      {file: "policy/sonic/point_laugh_head_arm_225_R_001__A457_M",
+       display_name: "指向大笑"}
+    point_laugh_high:
+      {file: "policy/sonic/point_laugh_head_arm_high_R_001__A549_M",
+       display_name: "高位指向大笑"}
+    point_laugh_low:
+      {file: "policy/sonic/point_laugh_head_arm_low_R_001__A457",
+       display_name: "低位指向大笑"}
+    wave_two_hands:
+      {file: "policy/sonic/wave_two_hands_R_001__A533",
+       display_name: "双手挥舞"}
+
 rl_policy:
   type: "onnx_infer"
   # Policy inference period.
   rl_dt: 0.02
   onnx_infer:
     policy_names: [wave_hello, heart_both, walk, walk_mjlab,
-                   show_bicep_both, victory_both, stand_mjlab, bones_dance]
+                   show_bicep_both, victory_both, stand_mjlab, bones_dance, sonic]
     default_policy: "stand_mjlab"
     policies:
       stand_mjlab:
@@ -818,6 +854,93 @@ rl_policy:
             max_vy: 0.5
             max_wz: 2.2
         # Generic attitude safety gate.
+        max_roll: 0.7
+        max_pitch: 0.7
+
+      sonic:
+        # LingLong SONIC encoder/decoder merged into the SDK model-I/O layout.
+        model_path: "policy/sonic/sonic_model_merged_v45_20260914_ref_fix.onnx"
+        runtime:
+          # PC uses CPU; RISC-V/K3 prefers SpaceMIT EP and may fall back to CPU.
+          provider: auto
+        runtime_safety:
+          # CPU inference is normally below 10 ms, but tolerate host scheduling jitter.
+          inference_deadline_s: 0.05
+        model_io:
+          inputs:
+            - {name: reference_obs, source: external}
+            - {name: proprio_history, source: observation}
+          outputs:
+            - {name: action, target: action}
+        # Model action order -> LingLong canonical joint order.
+        action_joint_index: [12, 0, 14, 6, 21, 13, 1,
+                             15, 7, 22, 2, 16, 8, 23,
+                             3, 17, 9, 24, 4, 18, 10,
+                             25, 5, 19, 11, 26, 20, 27]
+        # Zero scale keeps the two head and four wrist pitch/yaw joints at
+        # rl_default_pos without adding model-specific behavior to common code.
+        action_scale: [0.0, 0.294642857, 0.133333333, 0.294642857,
+                       0.133333333, 0.0, 0.15625, 0.4,
+                       0.15625, 0.4, 0.325, 0.24,
+                       0.325, 0.24, 0.133928571, 0.4,
+                       0.133928571, 0.4, 0.375, 0.31,
+                       0.375, 0.31, 0.75, 0.0,
+                       0.75, 0.0, 0.0, 0.0]
+        # Symmetric per-output limits keep
+        # rl_default_pos + action_scale * action inside the LingLong joint
+        # limits with a 0.01 rad margin. Zero-scale outputs use a wide limit so
+        # their policy feedback is preserved while their targets stay locked.
+        clip_actions: [100.0, 3.310441699, 21.052950053, 3.310441699,
+                       21.052950053, 100.0, 2.170022400, 0.818166250,
+                       2.170022400, 0.818166250, 6.413538462, 12.321083333,
+                       6.413538462, 12.321083333, 4.812513082, 1.027000000,
+                       4.812513082, 1.027000000, 1.367602667, 9.538903226,
+                       1.367602667, 9.538903226, 0.684798667, 100.0,
+                       0.684798667, 100.0, 100.0, 100.0]
+        clip_observations: []
+        # The model's first target already matches ZERO. Hand control to SONIC
+        # immediately so the policy owns balance from the first inference.
+        entry_target_transition_duration: 0.0
+        action_blend_ratio: 0.5
+        infer_decimation: 1
+        rl_default_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                         -0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                         0.0, 0.0,
+                         0.15, 0.25, 0.0, 1.15, 0.0, 0.0, 0.0,
+                         0.15, -0.25, 0.0, 1.15, 0.0, 0.0, 0.0]
+        zero_target_pos: [-0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                          -0.20, 0.0, 0.0, 0.48, -0.28, 0.0,
+                          0.0, 0.0,
+                          0.15, 0.25, 0.0, 1.15, 0.0, 0.0, 0.0,
+                          0.15, -0.25, 0.0, 1.15, 0.0, 0.0, 0.0]
+        kp: [280, 240, 100, 280, 100, 50,
+             280, 240, 100, 280, 100, 50,
+             80, 80,
+             150, 50, 50, 30, 10, 10, 10,
+             150, 50, 50, 30, 10, 10, 10]
+        kd: [14, 12, 5, 14, 5, 5,
+             14, 12, 5, 14, 5, 5,
+             1.5, 1.5,
+             3, 1.5, 1.5, 5, 1, 1, 1,
+             3, 1.5, 1.5, 5, 1, 1, 1]
+        observation:
+          segment_0_terms: [ang_vel, dof_pos, dof_vel, last_action, gravity]
+          segment_0_mode: flat_history
+          segment_0_length: 10
+          segment_0_order: oldest_first
+          segment_0_include_current: true
+          strict_dim_check: true
+          ang_vel_scale: 1.0
+          dof_pos_scale: 1.0
+          dof_vel_scale: 1.0
+          dof_pos_subtract_default: true
+        policy_adapter:
+          type: sonic
+          catalog: sonic_actions
+          motion_fps: 50
+          playback_speed: 1.0
+          future_frames: 10
+          future_step: 5
         max_roll: 0.7
         max_pitch: 0.7
 
