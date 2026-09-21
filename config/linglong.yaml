@@ -886,20 +886,34 @@ rl_policy:
                        0.133928571, 0.4, 0.375, 0.31,
                        0.375, 0.31, 0.75, 0.0,
                        0.75, 0.0, 0.0, 0.0]
-        # Symmetric per-output limits keep
-        # rl_default_pos + action_scale * action inside the LingLong joint
-        # limits with a 0.01 rad margin. Zero-scale outputs use a wide limit so
-        # their policy feedback is preserved while their targets stay locked.
-        clip_actions: [100.0, 3.310441699, 21.052950053, 3.310441699,
-                       21.052950053, 100.0, 2.170022400, 0.818166250,
-                       2.170022400, 0.818166250, 6.413538462, 12.321083333,
-                       6.413538462, 12.321083333, 4.812513082, 1.027000000,
-                       4.812513082, 1.027000000, 1.367602667, 9.538903226,
-                       1.367602667, 9.538903226, 0.684798667, 100.0,
-                       0.684798667, 100.0, 100.0, 100.0]
+        # Preserve SONIC's action/last_action contract. Limit only the mapped
+        # joint targets, using canonical robot joint order and a 0.01 rad margin.
+        clip_actions: []
+        target_position_lower: [-1.570796327, -0.349065850, -2.094395102,
+                                -0.174532925, -0.802851456, -0.520000000,
+                                -1.570796327, -0.785398163, -2.138028334,
+                                -0.174532925, -0.802851456, -0.520000000,
+                                -1.570796327, -0.785398163,
+                                -2.967059728, -0.087266463, -2.967059728,
+                                -0.785398163, -2.967059728, -1.396263402,
+                                -1.396263402,
+                                -2.967059728, -3.054326191, -2.967059728,
+                                -0.785398163, -2.967059728, -1.396263402,
+                                -1.396263402]
+        target_position_upper: [0.785398163, 0.785398163, 2.138028334,
+                                1.902408885, 0.602138592, 0.520000000,
+                                0.785398163, 0.349065850, 2.094395102,
+                                1.902408885, 0.602138592, 0.520000000,
+                                1.570796327, 0.785398163,
+                                2.967059728, 3.054326191, 2.967059728,
+                                1.570796327, 2.967059728, 1.396263402,
+                                1.396263402,
+                                2.967059728, 0.087266463, 2.967059728,
+                                1.570796327, 2.967059728, 1.396263402,
+                                1.396263402]
+        target_limit_margin: 0.01
         clip_observations: []
-        # The model's first target already matches ZERO. Hand control to SONIC
-        # immediately so the policy owns balance from the first inference.
+        # SONIC owns balance from the first inference; entry interpolation is disabled.
         entry_target_transition_duration: 0.0
         action_blend_ratio: 0.5
         infer_decimation: 1

@@ -110,6 +110,12 @@ run_hmi_linglong.sh
 
 `config/linglong.yaml` 保存通信、FSM 和策略参数，`config/linglong_hardware.yaml` 保存 CAN、IMU、关节映射及硬件标定参数。硬件配置仅适用于匹配的机器人版本和标定结果。
 
+SONIC 的 8 组参考动作由 `sonic_actions` 配置。策略使用
+`target_position_lower/upper` 按 28 轴机器人关节顺序限制映射后的目标位置，
+数值对应 `linglong_hardware.yaml` 中的 `position_limit`，并通过
+`target_limit_margin: 0.01` 保留余量。该限位不改变 SONIC 的模型 action、
+`action_blend_ratio: 0.5` 平滑状态或 `last_action` 历史观测。
+
 人形 SDK 通用流程参考 SpacemiT 人形机器人 SDK 官方文档；模型资源说明见 `resources/README.md`。
 
 ## 常见问题
