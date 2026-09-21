@@ -50,7 +50,7 @@ robot_base:
 # LingLong targets the physical robot by default. Select mujoco explicitly for
 # offline simulation.
 driver:
-  backend: whole_body
+  backend: mujoco
 
 whole_body:
   config_file: "linglong_hardware.yaml"
@@ -886,8 +886,8 @@ rl_policy:
                        0.133928571, 0.4, 0.375, 0.31,
                        0.375, 0.31, 0.75, 0.0,
                        0.75, 0.0, 0.0, 0.0]
-        # Preserve SONIC's action/last_action contract. Limit only the mapped
-        # joint targets, using canonical robot joint order and a 0.01 rad margin.
+        # Joint-space bounds from linglong_hardware.yaml, in canonical order.
+        # StateRL clamps final targets after mapping and entry interpolation.
         clip_actions: []
         target_position_lower: [-1.570796327, -0.349065850, -2.094395102,
                                 -0.174532925, -0.802851456, -0.520000000,
