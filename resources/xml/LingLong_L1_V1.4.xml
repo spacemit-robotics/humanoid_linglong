@@ -6,8 +6,9 @@
   <option timestep="0.001"/>
 
   <!--
-    Joint armatures and foot-contact parameters match the locomotion training
-    model. Actuator force limits match config/linglong_hardware.yaml.
+    Joint armatures match the installed motor models. Foot-contact parameters
+    remain aligned with the training model, and actuator force limits match
+    config/linglong_hardware.yaml.
   -->
 
   <!--
@@ -64,12 +65,12 @@
         <geom size="0.065 0.05" pos="-0.14 0 -0.05" quat="0.707388 0 0.706825 0" type="cylinder" rgba="1 1 1 1"/>
         <body name="left_hip_roll_link" pos="0 0 -0.05">
           <inertial pos="-0.002128 -7.9e-05 -0.088996" quat="0.450855 0.545899 0.52601 0.471208" mass="2.0916" diaginertia="0.00765753 0.00735295 0.00392751"/>
-          <joint name="left_hip_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.349066 0.785398" actuatorfrcrange="-150 150" armature="0.049729838949"/>
+          <joint name="left_hip_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.349066 0.785398" actuatorfrcrange="-150 150" armature="0.127606"/>
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="left_hip_roll_link"/>
           <geom size="0.065 0.04" pos="0 0 -0.08" type="cylinder" rgba="1 1 1 1"/>
           <body name="left_hip_yaw_link">
             <inertial pos="0.003857 -0.00632 -0.285854" quat="0.724164 -0.0100522 0.0138246 0.689416" mass="3.91508" diaginertia="0.0368522 0.036 0.00846585"/>
-            <joint name="left_hip_yaw_joint" pos="0 0 0" axis="0 0 1" range="-2.0944 2.13803" actuatorfrcrange="-130 130" armature="0.1606514"/>
+            <joint name="left_hip_yaw_joint" pos="0 0 0" axis="0 0 1" range="-2.0944 2.13803" actuatorfrcrange="-130 130" armature="0.062599"/>
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="left_hip_yaw_link"/>
             <geom size="0.065 0.1" pos="0 0 -0.25" type="cylinder" rgba="1 1 1 1"/>
             <body name="left_knee_link" pos="0 0 -0.364">
@@ -103,12 +104,12 @@
         <geom size="0.065 0.05" pos="-0.14 0 -0.05" quat="0.707388 0 0.706825 0" type="cylinder" rgba="1 1 1 1"/>
         <body name="right_hip_roll_link" pos="0 0 -0.05">
           <inertial pos="-0.002128 -7.9e-05 -0.088996" quat="0.471208 0.52601 0.545899 0.450855" mass="2.0916" diaginertia="0.00765753 0.00735295 0.00392751"/>
-          <joint name="right_hip_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.349066" actuatorfrcrange="-150 150" armature="0.049729838949"/>
+          <joint name="right_hip_roll_joint" pos="0 0 0" axis="1 0 0" range="-0.785398 0.349066" actuatorfrcrange="-150 150" armature="0.127606"/>
           <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="right_hip_roll_link"/>
           <geom size="0.065 0.04" pos="0 0 -0.08" type="cylinder" rgba="1 1 1 1"/>
           <body name="right_hip_yaw_link">
             <inertial pos="0.003857 0.00632 -0.285854" quat="0.69435 0.00943215 -0.0142737 0.719434" mass="3.91508" diaginertia="0.0368512 0.036001 0.00846582"/>
-            <joint name="right_hip_yaw_joint" pos="0 0 0" axis="0 0 1" range="-2.13803 2.0944" actuatorfrcrange="-130 130" armature="0.1606514"/>
+            <joint name="right_hip_yaw_joint" pos="0 0 0" axis="0 0 1" range="-2.13803 2.0944" actuatorfrcrange="-130 130" armature="0.062599"/>
             <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="right_hip_yaw_link"/>
             <geom size="0.065 0.1" pos="0 0 -0.25" type="cylinder" rgba="1 1 1 1"/>
             <body name="right_knee_link" pos="0 0 -0.364">

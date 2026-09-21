@@ -50,33 +50,11 @@ whole_body:
     - name: motor_alias_2
       driver: drv_can_encos
       bus: leg_left
-      model: "Encos EC-A8116-P1-18"
+      model: "Encos EC-A10020-P1-12"
       command_id: 2
       feedback_id: 2
       polarity: 1
       zero_offset: -0.67235065
-      position_period: 6.283185307
-      non_fatal_error_codes: [0x04]
-      command_limits: &encos_a8116_p1_18_command_limits
-        kp_max: 500.0
-        kd_max: 5.0
-        estimated_torque_max: 150.0
-      driver_options: &encos_a8116_p1_18
-        enable_on_init: false
-        protocol_limits:
-          position: [-12.5, 12.5]
-          velocity: [-18.0, 18.0]
-          torque: [-150.0, 150.0]
-          kp: [0.0, 500.0]
-          kd: [0.0, 5.0]
-    - name: motor_alias_3
-      driver: drv_can_encos
-      bus: leg_left
-      model: "Encos EC-A10020-P1-12"
-      command_id: 3
-      feedback_id: 3
-      polarity: -1
-      zero_offset: 0.008201724
       position_period: 6.283185307
       non_fatal_error_codes: [0x04]
       command_limits: &encos_a10020_p1_12_command_limits
@@ -91,6 +69,28 @@ whole_body:
           torque: [-150.0, 150.0]
           kp: [0.0, 500.0]
           kd: [0.0, 50.0]
+    - name: motor_alias_3
+      driver: drv_can_encos
+      bus: leg_left
+      model: "Encos EC-A8116-P1-18"
+      command_id: 3
+      feedback_id: 3
+      polarity: -1
+      zero_offset: 0.008201724
+      position_period: 6.283185307
+      non_fatal_error_codes: [0x04]
+      command_limits: &encos_a8116_p1_18_command_limits
+        kp_max: 500.0
+        kd_max: 5.0
+        estimated_torque_max: 150.0
+      driver_options: &encos_a8116_p1_18
+        enable_on_init: false
+        protocol_limits:
+          position: [-12.5, 12.5]
+          velocity: [-18.0, 18.0]
+          torque: [-150.0, 150.0]
+          kp: [0.0, 500.0]
+          kd: [0.0, 5.0]
     - name: motor_alias_4
       driver: drv_can_encos
       bus: leg_left
@@ -153,27 +153,27 @@ whole_body:
     - name: motor_alias_8
       driver: drv_can_encos
       bus: leg_right
-      model: "Encos EC-A8116-P1-18"
+      model: "Encos EC-A10020-P1-12"
       command_id: 2
       feedback_id: 2
       polarity: 1
       zero_offset: 0.67235065
       position_period: 6.283185307
       non_fatal_error_codes: [0x04]
-      command_limits: *encos_a8116_p1_18_command_limits
-      driver_options: *encos_a8116_p1_18
+      command_limits: *encos_a10020_p1_12_command_limits
+      driver_options: *encos_a10020_p1_12
     - name: motor_alias_9
       driver: drv_can_encos
       bus: leg_right
-      model: "Encos EC-A10020-P1-12"
+      model: "Encos EC-A8116-P1-18"
       command_id: 3
       feedback_id: 3
       polarity: -1
       zero_offset: 0.0089646755
       position_period: 6.283185307
       non_fatal_error_codes: [0x04]
-      command_limits: *encos_a10020_p1_12_command_limits
-      driver_options: *encos_a10020_p1_12
+      command_limits: *encos_a8116_p1_18_command_limits
+      driver_options: *encos_a8116_p1_18
     - name: motor_alias_10
       driver: drv_can_encos
       bus: leg_right
@@ -410,13 +410,13 @@ whole_body:
   # Order is the SDK/URDF/policy canonical joint order from linglong.yaml.
   joints:
     - {name: left_hip_pitch_joint, mapping: direct, motors: [motor_alias_1], position_limit: [-1.570796327, 0.785398163], velocity_limit: 12.8805, torque_limit: 300.0}
-    - {name: left_hip_roll_joint, mapping: direct, motors: [motor_alias_2], position_limit: [-0.34906585, 0.785398163], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 5.0}}
+    - {name: left_hip_roll_joint, mapping: direct, motors: [motor_alias_2], position_limit: [-0.34906585, 0.785398163], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 50.0}}
     - {name: left_hip_yaw_joint, mapping: direct, motors: [motor_alias_3], position_limit: [-2.094395102, 2.138028334], velocity_limit: 14.6608, torque_limit: 130.0}
     - {name: left_knee_joint, mapping: direct, motors: [motor_alias_4], position_limit: [-0.174532925, 1.902408885], velocity_limit: 14.6608, torque_limit: 150.0}
     - {name: left_ankle_pitch_joint, mapping: parallel_ankle, motors: [motor_alias_5, motor_alias_6], position_limit: [-0.802851456, 0.602138592], velocity_limit: 16.441, torque_limit: 90.0}
     - {name: left_ankle_roll_joint, mapping: parallel_ankle, motors: [motor_alias_5, motor_alias_6], position_limit: [-0.52, 0.52], velocity_limit: 16.441, torque_limit: 90.0}
     - {name: right_hip_pitch_joint, mapping: direct, motors: [motor_alias_7], position_limit: [-1.570796327, 0.785398163], velocity_limit: 12.8805, torque_limit: 300.0}
-    - {name: right_hip_roll_joint, mapping: direct, motors: [motor_alias_8], position_limit: [-0.785398163, 0.34906585], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 5.0}}
+    - {name: right_hip_roll_joint, mapping: direct, motors: [motor_alias_8], position_limit: [-0.785398163, 0.34906585], velocity_limit: 14.6608, torque_limit: 150.0, impedance: {mode: split, motor_kp_max: 500.0, motor_kd_max: 50.0}}
     - {name: right_hip_yaw_joint, mapping: direct, motors: [motor_alias_9], position_limit: [-2.138028334, 2.094395102], velocity_limit: 14.6608, torque_limit: 130.0}
     - {name: right_knee_joint, mapping: direct, motors: [motor_alias_10], position_limit: [-0.174532925, 1.902408885], velocity_limit: 14.6608, torque_limit: 150.0}
     - {name: right_ankle_pitch_joint, mapping: parallel_ankle, motors: [motor_alias_11, motor_alias_12], position_limit: [-0.802851456, 0.602138592], velocity_limit: 16.441, torque_limit: 90.0}
