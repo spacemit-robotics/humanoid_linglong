@@ -117,6 +117,10 @@ SONIC 的 8 组参考动作由 `sonic_actions` 配置。策略使用
 `clip_actions` 为空，模型动作仍按 `action_blend_ratio: 0.5` 平滑；
 最终位置裁剪不回写模型的上一帧动作输入。
 
+SONIC ONNX 与参考动作位于被 Git 忽略的 `policy/sonic/`，仅同步代码分支不会带上
+这些资产。`body_check` 的参考首帧存在速度不连续，目前仅用于仿真，不作为实机
+动作验收项。实机默认使用 `whole_body` 后端；需要 PC 仿真时显式切换到 `mujoco`。
+
 人形 SDK 通用流程参考 SpacemiT 人形机器人 SDK 官方文档；模型资源说明见 `resources/README.md`。
 
 ## 常见问题

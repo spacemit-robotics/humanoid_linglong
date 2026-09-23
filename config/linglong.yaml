@@ -17,7 +17,7 @@ robot_base:
   robot_dir: ".."
   threads:
     rl_infer:
-      cpu_id: -1
+      cpu_affinity: [4, 5, 6, 7]
       sched: other
       priority: 0
     control_main:
@@ -50,7 +50,7 @@ robot_base:
 # LingLong targets the physical robot by default. Select mujoco explicitly for
 # offline simulation.
 driver:
-  backend: mujoco
+  backend: whole_body
 
 whole_body:
   config_file: "linglong_hardware.yaml"
@@ -863,8 +863,12 @@ rl_policy:
         runtime:
           # PC uses CPU; RISC-V/K3 prefers SpaceMIT EP and may fall back to CPU.
           provider: auto
+          threads: 4
+          # SpaceMIT EP compiles its executable path during the first Run.
+          # Complete that work before RL takes control; CPU sessions also accept it.
+          warmup_runs: 1
         runtime_safety:
-          # CPU inference is normally below 10 ms, but tolerate host scheduling jitter.
+          # End-to-end release deadline; this does not relax the 20 ms inference period.
           inference_deadline_s: 0.05
         model_io:
           inputs:
