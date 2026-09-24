@@ -12,7 +12,7 @@
 - PC 单机仿真（SHM 或 UDP 本机通信）
 - sim2sim 跨机推理（PC 仿真 + K3 板卡 RL 推理）
 - K3 板卡实机控制（28 轴电机、并联脚踝和 Forsense IMU）
-- walk_mjlab、walk、wave_hello、heart_both 四套预训练 RL 策略
+- 多套步行与动作跟踪策略；可选策略以 `config/linglong.yaml` 中的 `policy_names` 为准
 
 不支持：
 - 在线训练或策略更新
@@ -110,24 +110,17 @@ run_hmi_linglong.sh
 
 `config/linglong.yaml` 保存通信、FSM 和策略参数，`config/linglong_hardware.yaml` 保存 CAN、IMU、关节映射及硬件标定参数。硬件配置仅适用于匹配的机器人版本和标定结果。
 
-SONIC 的 8 组参考动作由 `sonic_actions` 配置。策略使用
-`target_position_lower/upper` 按 28 轴机器人关节顺序限制最终目标位置，
-数值对应 `linglong_hardware.yaml` 中的 `position_limit`，并通过
-`target_limit_margin: 0.01` 保留余量。修改硬件关节限位时需同步核对这两组配置。
-`clip_actions` 为空，模型动作仍按 `action_blend_ratio: 0.5` 平滑；
-最终位置裁剪不回写模型的上一帧动作输入。
+SONIC 使用同一个全身策略跟踪 `sonic_actions` 中选择的参考动作，策略和动作参数见
+`config/linglong.yaml`。模型与参考动作单独分发，不包含在源码包中；部署时将资源
+放入 `policy/sonic/`，并确认文件路径与配置一致。
 
-SONIC ONNX 与参考动作位于被 Git 忽略的 `policy/sonic/`，仅同步代码分支不会带上
-这些资产。`body_check` 的参考首帧存在速度不连续，目前仅用于仿真，不作为实机
-动作验收项。实机默认使用 `whole_body` 后端；需要 PC 仿真时显式切换到 `mujoco`。
-
-人形 SDK 通用流程参考 SpacemiT 人形机器人 SDK 官方文档；模型资源说明见 `resources/README.md`。
+人形 SDK 通用流程参考 SpacemiT 人形机器人 SDK 官方文档；仿真模型资源说明见 `resources/README.md`。
 
 ## 常见问题
 
 | 现象 | 处理 |
 | --- | --- |
-| `[PolicyConfigLoader] ONNX 模型文件不存在` | 运行 `download_models_linglong.sh` 下载模型后重试 |
+| `[PolicyConfigLoader] ONNX 模型文件不存在` | 检查策略 YAML 中的 `model_path` 与 `policy/` 下的实际文件；已发布到模型库的资源可用 `download_models_linglong.sh` 下载 |
 | 进程启动后通信无数据 | 检查 `config/linglong.yaml` 中的 transport 配置，确认通信方式与运行环境一致 |
 | `whole_body` 初始化失败 | 检查 CAN、IMU 设备和访问权限，并确认没有其他进程占用硬件 |
 | RL 控制不稳定或姿态异常 | 立即退出 RL 并保持吊装，检查策略、关节映射、零位和 IMU 方向是否匹配 |
