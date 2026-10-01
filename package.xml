@@ -6,6 +6,7 @@
   <description>Humanoid LingLong robot application: config, resources, and policy models</description>
   <depend>humanoid_common</depend>
   <depend>whole_body</depend>
+  <system_depend check="python3 -c 'import yaml'">python3-yaml</system_depend>
   <export>
     <build_type>cmake</build_type>
   </export>

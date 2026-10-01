@@ -52,6 +52,11 @@ robot_base:
 driver:
   backend: whole_body
 
+operator_service:
+  bind_address: "127.0.0.1"
+  port: 8765
+  lease_ms: 1000
+
 whole_body:
   config_file: "linglong_hardware.yaml"
 

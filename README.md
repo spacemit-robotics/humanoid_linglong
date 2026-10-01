@@ -13,6 +13,7 @@
 - sim2sim 跨机推理（PC 仿真 + K3 板卡 RL 推理）
 - K3 板卡实机控制（28 轴电机、并联脚踝和 Forsense IMU）
 - 多套步行与动作跟踪策略；可选策略以 `config/linglong.yaml` 中的 `policy_names` 为准
+- 仿真使用终端 TUI；实机另支持 Android App 和手机扫码网页，统一经过 HMI 服务接入
 
 不支持：
 - 在线训练或策略更新
@@ -26,7 +27,7 @@
 
 ```bash
 # 系统依赖
-sudo apt install -y libeigen3-dev libyaml-cpp-dev libglfw3-dev cmake g++
+sudo apt install -y libeigen3-dev libyaml-cpp-dev libboost-dev nlohmann-json3-dev libglfw3-dev cmake g++ python3-yaml
 
 # MuJoCo 3.4.0
 mkdir -p ~/.mujoco
@@ -45,7 +46,7 @@ sudo ldconfig
 
 ```bash
 # 系统依赖
-sudo apt install -y libeigen3-dev libyaml-cpp-dev spacemit-tcm pkg-config
+sudo apt install -y libeigen3-dev libyaml-cpp-dev libboost-dev nlohmann-json3-dev spacemit-tcm pkg-config python3-yaml
 
 # SpacemiT 定制版 ONNX Runtime（含 A100 核 EP 加速）
 sudo apt remove libonnxruntime-dev libonnxruntime1.23 python3-onnxruntime
@@ -72,39 +73,109 @@ download_models_linglong.sh
 
 ### 运行示例
 
-进行 MuJoCo 仿真前，确认 `config/linglong.yaml` 使用：
-
-```yaml
-driver:
-  backend: mujoco
-```
-
-**FSM 完整仿真（三终端）**：
+同一份 `config/linglong.yaml` 支持仿真与实机。一键脚本通过 `--sim` / `--real` 同时选择
+driver 后端与 HMI 接入模式，不改 YAML、不自动上电。
 
 ```bash
-run_driver_linglong.sh    # 终端1（PC，x86_64）
+run_linglong.sh --sim    # 三个核心进程和原终端 TUI；不提供网页、App 或二维码
+```
+
+脚本在当前终端看护进程；Ctrl+C 一起退出。已有核心进程时拒绝重复启动，不终止其他
+进程。三个进程的标准输出和错误输出保存在 YAML 的 `logging.directory` 下的
+`linglong_launch_*/driver.log`、`control.log`、`hmi.log`；默认根目录为 SDK 的
+`log/humanoid/`，与原 `events.log`、CSV 日志统一存放。原运行日志的会话目录不变。
+仅启动核心进程可加 `--no-tui`，再单独执行 `run_hmi_tui_linglong.sh`。
+
+**FSM 完整仿真（三个核心进程，另开终端客户端）**：
+
+```bash
+run_driver_linglong.sh --sim # 终端1（PC，x86_64）
 run_control_linglong.sh   # 终端2（PC 或 K3 板卡）
-run_hmi_linglong.sh       # 终端3（PC 或 K3 板卡）
+run_hmi_linglong.sh --sim # 终端3，仅接受本机 TUI
+run_hmi_tui_linglong.sh   # 可选终端客户端，不是第四个常驻进程
 ```
 
 **sim2sim（双终端）**：
 
 ```bash
-run_driver_linglong.sh    # 终端1（PC）
+run_driver_linglong.sh --sim # 终端1（PC）
 run_sim2sim_linglong.sh   # 终端2（K3 板卡）
 ```
 
-**K3 实机控制（三终端）**：
+**K3 实机控制**：
 
-在 K3 板卡上依次启动：
+在 K3 板卡上启动：
 
 ```bash
-run_driver_linglong.sh
-run_control_linglong.sh
-run_hmi_linglong.sh
+run_linglong.sh --real
 ```
 
-首次实机调试前必须可靠吊装机器人并清空运动范围。通过 HMI 按 `POWER_OFF → DAMP → HOME → ZERO → RL` 的顺序切换状态；反馈异常或控制超时时，应立即退回 DAMP 或 POWER_OFF。
+实机默认只启动三个核心进程；需要同一终端显示 TUI 时加 `--tui`，也可另开终端执行
+`run_hmi_tui_linglong.sh`。原来的 driver/control/HMI 三条独立脚本仍可使用；HMI 用
+`--real`，或不传模式时遵循 YAML 的 `driver.backend`。默认 YAML 是实机。
+启动时在当前终端完成 sudo 认证，仅 driver 提权；control、HMI 和 TUI 保持普通用户运行。
+
+每个新终端先执行 `source build/envsetup.sh`。首次实机调试前必须可靠吊装机器人并清空运动范围。
+终端客户端按 `L` 申请控制权，再用右箭头按 `POWER_OFF → DAMP → HOME → ZERO → RL` 的顺序切换；
+ZERO 显示已到位后才能进入 RL。反馈异常或控制超时时，应立即退回 DAMP 或 POWER_OFF。
+
+**实机手机/App/扫码网页**：使用机器人自带路由器的固定内网地址，手机先连接机器人
+Wi-Fi。不使用开发 PC/虚拟机地址，也不依赖展会网络给机器人分配的临时地址。
+服务默认仅本机监听；完成机器人内网配置后启动，例如：
+
+```bash
+run_linglong.sh --real --listen 0.0.0.0 --public-url http://192.168.1.247:8765
+```
+
+Android App 或手机浏览器扫码后手动申请控制权；先释放原终端的控制权再切换客户端。
+展示部署时，将 `operator_service.bind_address` 和 `public_url` 配置一次；后续仍运行
+`run_hmi_linglong.sh`，不需要可见终端。`public_url` 应使用固定 IP 或可解析的固定主机名。
+固定二维码包含连接凭据，扫码自动配对，不用手填凭据；地址和凭据不变时跨重启仍有效。
+服务会自动导出 `~/.local/state/humanoid-operator/linglong/access.svg`，可打印交给受信任
+操作者，也可从网页右上角下载。二维码等同操作钥匙，不应公开发布。离线导出命令：
+
+```bash
+run_hmi_linglong.sh --real --export-pairing --public-url http://192.168.1.247:8765
+```
+
+手机扫码连接后手动申请控制权，不会自动上电。仿真不提供网页或扫码接口；
+本版本没有公网远控或 TLS。
+App 工程与接口说明位于 common 的 `clients/android/` 和 `src/operator_service/`。
+部署 APK 后，扫码打开的控制页同时提供“下载 Android App”；下载与控制共用 HMI 的
+8765 端口，不需要额外的下载进程。安装后在 App 扫描同一张二维码即可配对。
+旧 ROS 2 语音 HMI 尚未迁移，不能同时作为内部 HMI 写端启动。
+
+日常启动无需额外 export。仅测试自定义配置时可使用 `LINGLONG_CONFIG` / `OPERATOR_CONNECTION`。
+连接文件与凭据默认位于当前用户的 `~/.local/state/humanoid-operator/linglong/`，
+服务与客户端使用同一普通用户，不使用 root 启动 HMI。
+
+### K3 开机自启
+
+SDK、策略和机器人内网配置完成后，以日常操作用户安装服务，例如 `bianbu`：
+
+```bash
+cd ~/spacemit_robot
+sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu
+sudo --user root systemctl start linglong.service
+```
+
+安装命令只启用下次开机自启，不启动硬件；第二条命令启动当前会话。开机依次配置
+can0–can5（1 Mbps、restart 10 ms、发送队列 100），再调用 `run_linglong.sh --real`。
+只有 driver 和 CAN 配置使用 root；control/HMI 使用指定普通用户，沿用其原二维码、
+凭据和 SDK 日志目录。不会自动上电、申请控制权或进入 RL。
+
+```bash
+systemctl status linglong.service --no-pager
+journalctl -u linglong.service -b -n 80 --no-pager
+run_hmi_tui_linglong.sh
+sudo --user root systemctl stop linglong.service
+sudo --user root systemctl disable linglong.service
+```
+
+服务运行时，不再运行 `run_linglong.sh --real` 或临时 CAN 配置脚本；可独立打开
+TUI、网页或 App。需要手动调试三进程时先停止服务。任一核心进程退出会清理同组进程，
+不会自动重启硬件；排查后再手动启动服务。部署文件见 `services/`，安装只修改
+`linglong.service`，不会配置 sudo 免密规则。
 
 ## 详细使用
 
