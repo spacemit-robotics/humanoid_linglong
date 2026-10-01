@@ -1,0 +1,23 @@
+[Unit]
+Description=SpacemiT LingLong humanoid control
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=@GROUP@
+WorkingDirectory=@SDK_ROOT@
+Environment="SDK_ROOT=@SDK_ROOT@"
+Environment="HOME=@HOME@"
+Environment="LINGLONG_CONFIG=@SDK_ROOT@/application/native/humanoid_linglong/config/linglong.yaml"
+ExecStartPre=@SDK_ROOT@/output/staging/bin/configure_can_linglong.sh
+ExecStart=@SDK_ROOT@/output/staging/bin/run_linglong.sh --real --service-user @USER@
+KillMode=mixed
+KillSignal=SIGINT
+SuccessExitStatus=130 143
+TimeoutStopSec=15
+Restart=no
+
+[Install]
+WantedBy=multi-user.target
