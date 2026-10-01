@@ -1,5 +1,5 @@
 [Unit]
-Description=SpacemiT LingLong humanoid control
+Description=SpacemiT LingLong @PROFILE_LABEL@ (profile=@PROFILE@)
 Wants=network-online.target
 After=network-online.target
 
@@ -10,9 +10,9 @@ Group=@GROUP@
 WorkingDirectory=@SDK_ROOT@
 Environment="SDK_ROOT=@SDK_ROOT@"
 Environment="HOME=@HOME@"
-Environment="LINGLONG_CONFIG=@SDK_ROOT@/application/native/humanoid_linglong/config/linglong.yaml"
-ExecStartPre=@SDK_ROOT@/output/staging/bin/configure_can_linglong.sh
-ExecStart=@SDK_ROOT@/output/staging/bin/run_linglong.sh --real --service-user @USER@
+Environment="LINGLONG_CONFIG=@SDK_ROOT@/application/native/humanoid_linglong/config/@CONFIG@"
+ExecStartPre=@SDK_ROOT@/output/staging/bin/configure_can_linglong.sh --profile @PROFILE@
+ExecStart=@SDK_ROOT@/output/staging/bin/run_linglong.sh --real --profile @PROFILE@ --service-user @USER@@NETWORK_ARGS@
 KillMode=mixed
 KillSignal=SIGINT
 SuccessExitStatus=130 143

@@ -1,0 +1,48 @@
+# Fixed-base display: arms only; no leg/head actuation or IMU.
+robot_base:
+  name: linglong
+  num_dof: 14
+  joint_names: [left_shoulder_pitch_joint, left_shoulder_roll_joint, left_shoulder_yaw_joint, left_elbow_joint,
+    left_wrist_roll_joint, left_wrist_pitch_joint, left_wrist_yaw_joint, right_shoulder_pitch_joint, right_shoulder_roll_joint,
+    right_shoulder_yaw_joint, right_elbow_joint, right_wrist_roll_joint, right_wrist_pitch_joint, right_wrist_yaw_joint]
+  robot_dir: ..
+  threads:
+    control_main: {cpu_id: -1, sched: other, priority: 0}
+    driver_main: {cpu_id: -1, sched: other, priority: 0}
+  kp: [150, 150, 50, 50, 20, 20, 20, 150, 150, 50, 50, 20, 20, 20]
+  kd: [1.5, 1.5, 0.5, 0.5, 1, 1, 1, 1.5, 1.5, 0.5, 0.5, 1, 1, 1]
+  default_joint_pos: [0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.2, 0.0, 0.0, 0.0, 0.0, 0.0]
+  fixed_base: true
+driver: {backend: whole_body}
+operator_service: {bind_address: 127.0.0.1, port: 8765, lease_ms: 1000}
+whole_body: {config_file: linglong_static_hardware.yaml}
+logging:
+  level: debug
+  directory: ../../../../log/humanoid
+  console: {enabled: true}
+  file: {enabled: true, max_size_mb: 128, max_files: 8}
+  queue_capacity: 8192
+  artifacts: [linglong_static_hardware.yaml, linglong.yaml]
+  telemetry: {enabled: true, rate_hz: 20, control_rate_hz: 50, hardware_rate_hz: 100, timing_window_s: 5}
+  driver_monitor: {enabled: true, rate_hz: 2}
+behavior_manager:
+  safety: {driver_state_timeout_s: 0.05, release_duration_s: 1.0}
+  damp_kd: [1.2, 0.6, 0.6, 2.0, 0.4, 0.4, 0.4, 1.2, 0.6, 0.6, 2.0, 0.4, 0.4, 0.4]
+  home:
+    gain_ramp_duration: 1.0
+    move_duration: 3.0
+    kp: [150, 150, 50, 50, 20, 20, 20, 150, 150, 50, 50, 20, 20, 20]
+    kd: [1.5, 1.5, 1.5, 1.5, 1, 1, 1, 1.5, 1.5, 1.5, 1.5, 1, 1, 1]
+  zero:
+    move_duration: 3.0
+    position_tolerance: 0.25
+    velocity_tolerance: 0.1
+    settle_duration: 0.2
+    kp: [150, 50, 50, 30, 10, 10, 10, 150, 50, 50, 30, 10, 10, 10]
+    kd: [3, 1.5, 1.5, 5, 1, 1, 1, 3, 1.5, 1.5, 5, 1, 1, 1]
+  control_dt: 0.002
+  zero_pos: [0.15, 0.25, 0.0, 1.15, 0.0, 0.0, 0.0, 0.15, -0.25, 0.0, 1.15, 0.0, 0.0, 0.0]
+  trajectory: {enabled: true, catalog_file: linglong.yaml, catalog: upper_body_actions}
+transport:
+  type: shm
+  shm: {prefix: linglong, capacity: 4, slot_size: 4096}
