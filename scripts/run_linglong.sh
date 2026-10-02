@@ -5,7 +5,7 @@ set -euo pipefail
 
 usage() {
     echo "Usage: run_linglong.sh --sim [--no-tui]"
-    echo "       run_linglong.sh --real [--tui] [--listen ADDRESS] [--public-url URL]"
+    echo "       run_linglong.sh --real [--profile full|static] [--tui] [--listen ADDRESS] [--public-url URL]"
     echo "       run_linglong.sh --real --service-user USER (root, system service)"
 }
 
@@ -19,10 +19,15 @@ esac
 shift
 HMI_ARGS=("$MODE")
 SERVICE_USER=""
+PROFILE=""
 while (($#)); do
     case "$1" in
         --tui) TUI=yes; shift ;;
         --no-tui) TUI=no; shift ;;
+        --profile)
+            [[ "$MODE" == --real && $# -ge 2 ]] || { usage >&2; exit 1; }
+            [[ "$2" == full || "$2" == static ]] || { usage >&2; exit 1; }
+            PROFILE="$2"; shift 2 ;;
         --service-user)
             [[ $# -ge 2 ]] || { usage >&2; exit 1; }
             SERVICE_USER="$2"; shift 2 ;;
@@ -45,6 +50,10 @@ fi
 export SDK_ROOT
 BIN="$SDK_ROOT/output/staging/bin"
 CONFIG="${LINGLONG_CONFIG:-$SDK_ROOT/application/native/humanoid_linglong/config/linglong.yaml}"
+if [[ -n "$PROFILE" ]]; then
+    CONFIG="$SDK_ROOT/application/native/humanoid_linglong/config/linglong.yaml"
+    [[ "$PROFILE" != static ]] || CONFIG="${CONFIG%.yaml}_static.yaml"
+fi
 export LINGLONG_CONFIG="$CONFIG"
 export PATH="$BIN:$PATH"
 AS_OPERATOR=()
@@ -194,6 +203,7 @@ check_children() {
 }
 
 echo "启动灵龙 ${MODE#--}；日志：$LOG_DIR"
+[[ "$PROFILE" != static ]] || echo "固定底座展示：仅双臂 14 关节，无腿部/头部控制，无 IMU 或 RL。"
 start driver "$BIN/run_driver_linglong.sh" "$MODE"
 start control "$BIN/run_control_linglong.sh"
 start hmi "$BIN/run_hmi_linglong.sh" "${HMI_ARGS[@]}"

@@ -164,6 +164,9 @@ can0–can5（1 Mbps、restart 10 ms、发送队列 100），再调用 `run_ling
 只有 driver 和 CAN 配置使用 root；control/HMI 使用指定普通用户，沿用其原二维码、
 凭据和 SDK 日志目录。不会自动上电、申请控制权或进入 RL。
 
+安装时可附带 `--listen 0.0.0.0 --public-url http://192.168.1.247:8765`，将手机访问
+地址保存到开机服务；省略时沿用所选 YAML 的 `operator_service` 配置。切换配置前先停止服务。
+
 ```bash
 systemctl status linglong.service --no-pager
 journalctl -u linglong.service -b -n 80 --no-pager
@@ -178,6 +181,60 @@ TUI、网页或 App。需要手动调试三进程时先停止服务。任一核�
 `linglong.service`，不会配置 sudo 免密规则。
 
 ## 详细使用
+
+### 固定底座双臂展示
+
+`config/linglong_static.yaml` 用于底座可靠固定本体、双腿不供电且不安装 IMU 的展示。
+只控制双臂 14 个关节，不控制腿部或头部。动作复用 `linglong.yaml` 的
+`upper_body_actions` 目录和原 NPZ 文件，不加载 ONNX；不需要另外下载展示模型。
+双臂标定及限位见 `linglong_static_hardware.yaml`，动作增益采用 `stand_mjlab` 的双臂值。
+
+展示使用同一个 `linglong.service`，不另建并行控制服务。确认底座紧固、双腿断电、
+手臂和被动腿部周围没有人员或障碍物，一次性切换到静态展示自启动：
+
+```bash
+cd ~/spacemit_robot
+sudo --user root systemctl stop linglong.service
+sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu --profile static \
+  --listen 0.0.0.0 --public-url http://192.168.1.247:8765
+sudo --user root systemctl start linglong.service
+systemctl status linglong.service --no-pager
+```
+
+安装器会备份原服务配置，并启用下一次开机自启；`start` 用于本次立即启动。
+以后开机自动配置 can2/can3，再启动 driver、control 和 HMI，不需要执行 CAN 或 run 脚本，
+也不需要电脑或 TUI 在线。网络地址只在安装时配置一次，须匹配机器人路由器的固定内网。
+`systemctl status linglong.service` 的描述会显示 `fixed-base arms (profile=static)`；
+全身模式显示 `full-body RL (profile=full)`，启动命令和配置文件路径也对应所选模式。
+
+手机连接 `linglong` Wi-Fi，用原固定二维码或 Android App 连接。仍使用 `bianbu`
+用户的原凭据，地址不变时二维码不变。手动申请控制权，依次进入阻尼、复位、准备、动作，
+准备姿态到位后才允许播放动作；完成或取消会平滑回准备姿态。启动不会自动使能或播放动作。
+
+调试时可在服务运行期间连接 TUI，不要再启动第二套核心进程：
+
+```bash
+source build/envsetup.sh
+run_hmi_tui_linglong.sh
+```
+
+按 `L` 申请控制权，右箭头依次进入 `DAMP → HOME → ZERO → TRAJECTORY`；
+按 `A` 选动作，Enter 播放，`C` 取消，左箭头退 DAMP，`F` 失能。
+恢复全身模式时，先恢复全身供电、IMU 及相应保护条件，再切换同一个服务：
+
+```bash
+sudo --user root systemctl stop linglong.service
+sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu --profile full \
+  --listen 0.0.0.0 --public-url http://192.168.1.247:8765
+sudo --user root systemctl start linglong.service
+```
+
+两种模式使用相同硬件占用锁，不能同时启动。静态模式不支持 `--sim`；无硬件检查可运行
+`test_trajectory application/native/humanoid_linglong/config/linglong_static.yaml`，该检查只验证
+状态和目标生成，不验证机械稳定性或实际电机响应。
+
+无 IMU 时界面显示“未配置”，不提供倾斜保护。物理急停切断电源后手臂仍会下落；
+底座必须能承受动作的反作用力，软件限位不能替代机械固定和运动范围检查。
 
 `config/linglong.yaml` 保存通信、FSM 和策略参数，`config/linglong_hardware.yaml` 保存 CAN、IMU、关节映射及硬件标定参数。硬件配置仅适用于匹配的机器人版本和标定结果。
 

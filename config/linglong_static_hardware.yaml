@@ -1,0 +1,265 @@
+# Fixed-base display: arms only; no leg/head actuation or IMU.
+schema_version: 2
+whole_body:
+  cycle_s: 0.002
+  startup_feedback_timeout_s: 1.5
+  feedback_timeout_s: 0.04
+  command_timeout_s: 0.1
+  require_motor_receive_timestamps: true
+  startup_mode: disabled
+  allow_actuation: true
+  buses:
+  - {name: arm_left, type: socketcan, device: can2, bitrate: 1000000}
+  - {name: arm_right, type: socketcan, device: can3, bitrate: 1000000}
+  motors:
+  - name: motor_alias_13
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J6248P-2EC
+    command_id: 1
+    feedback_id: 17
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: &id001 {kp_max: 500.0, kd_max: 5.0, estimated_torque_max: 120.0}
+    driver_options: &id002
+      enable_on_init: false
+      feedback_period_us: 1000
+      protocol_limits:
+        position: [-12.566, 12.566]
+        velocity: [-20.0, 20.0]
+        torque: [-120.0, 120.0]
+        kp: [0.0, 500.0]
+        kd: [0.0, 5.0]
+  - name: motor_alias_14
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J6248P-2EC
+    command_id: 2
+    feedback_id: 18
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id001
+    driver_options: *id002
+  - name: motor_alias_15
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J4340P-2EC
+    command_id: 3
+    feedback_id: 19
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: &id003 {kp_max: 500.0, kd_max: 5.0, estimated_torque_max: 28.0}
+    driver_options: &id004
+      enable_on_init: false
+      feedback_period_us: 1000
+      protocol_limits:
+        position: [-12.5, 12.5]
+        velocity: [-20.0, 20.0]
+        torque: [-28.0, 28.0]
+        kp: [0.0, 500.0]
+        kd: [0.0, 5.0]
+  - name: motor_alias_16
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J4340P-2EC
+    command_id: 4
+    feedback_id: 20
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id003
+    driver_options: *id004
+  - name: motor_alias_17
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J4310-2EC
+    command_id: 5
+    feedback_id: 21
+    polarity: 1
+    zero_offset: 0.0024
+    command_limits: &id005 {kp_max: 500.0, kd_max: 5.0, estimated_torque_max: 10.0}
+    driver_options: &id006
+      enable_on_init: false
+      feedback_period_us: 1000
+      protocol_limits:
+        position: [-12.5, 12.5]
+        velocity: [-50.0, 50.0]
+        torque: [-10.0, 10.0]
+        kp: [0.0, 500.0]
+        kd: [0.0, 5.0]
+  - name: motor_alias_18
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J4310-2EC
+    command_id: 6
+    feedback_id: 22
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: *id005
+    driver_options: *id006
+  - name: motor_alias_19
+    driver: drv_can_dm
+    bus: arm_left
+    model: Damiao DM-J4310-2EC
+    command_id: 7
+    feedback_id: 23
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: *id005
+    driver_options: *id006
+  - name: motor_alias_20
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J6248P-2EC
+    command_id: 1
+    feedback_id: 17
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id001
+    driver_options: *id002
+  - name: motor_alias_21
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J6248P-2EC
+    command_id: 2
+    feedback_id: 18
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id001
+    driver_options: *id002
+  - name: motor_alias_22
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J4340P-2EC
+    command_id: 3
+    feedback_id: 19
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id003
+    driver_options: *id004
+  - name: motor_alias_23
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J4340P-2EC
+    command_id: 4
+    feedback_id: 20
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: *id003
+    driver_options: *id004
+  - name: motor_alias_24
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J4310-2EC
+    command_id: 5
+    feedback_id: 21
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: *id005
+    driver_options: *id006
+  - name: motor_alias_25
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J4310-2EC
+    command_id: 6
+    feedback_id: 22
+    polarity: -1
+    zero_offset: 0.0
+    command_limits: *id005
+    driver_options: *id006
+  - name: motor_alias_26
+    driver: drv_can_dm
+    bus: arm_right
+    model: Damiao DM-J4310-2EC
+    command_id: 7
+    feedback_id: 23
+    polarity: 1
+    zero_offset: 0.0
+    command_limits: *id005
+    driver_options: *id006
+  joints:
+  - name: left_shoulder_pitch_joint
+    mapping: direct
+    motors: [motor_alias_13]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 6.28
+    torque_limit: 75.0
+  - name: left_shoulder_roll_joint
+    mapping: direct
+    motors: [motor_alias_14]
+    position_limit: [-0.087266463, 3.054326191]
+    velocity_limit: 6.28
+    torque_limit: 80.0
+  - name: left_shoulder_yaw_joint
+    mapping: direct
+    motors: [motor_alias_15]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 10.47
+    torque_limit: 27.0
+  - name: left_elbow_joint
+    mapping: direct
+    motors: [motor_alias_16]
+    position_limit: [-0.785398163, 1.570796327]
+    velocity_limit: 10.47
+    torque_limit: 27.0
+  - name: left_wrist_roll_joint
+    mapping: direct
+    motors: [motor_alias_17]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 20.94
+    torque_limit: 7.0
+  - name: left_wrist_pitch_joint
+    mapping: direct
+    motors: [motor_alias_18]
+    position_limit: [-1.396263402, 1.396263402]
+    velocity_limit: 20.94
+    torque_limit: 7.0
+  - name: left_wrist_yaw_joint
+    mapping: direct
+    motors: [motor_alias_19]
+    position_limit: [-1.396263402, 1.396263402]
+    velocity_limit: 20.943
+    torque_limit: 7.0
+  - name: right_shoulder_pitch_joint
+    mapping: direct
+    motors: [motor_alias_20]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 6.28
+    torque_limit: 75.0
+  - name: right_shoulder_roll_joint
+    mapping: direct
+    motors: [motor_alias_21]
+    position_limit: [-3.054326191, 0.087266463]
+    velocity_limit: 6.28
+    torque_limit: 80.0
+  - name: right_shoulder_yaw_joint
+    mapping: direct
+    motors: [motor_alias_22]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 10.47
+    torque_limit: 27.0
+  - name: right_elbow_joint
+    mapping: direct
+    motors: [motor_alias_23]
+    position_limit: [-0.785398163, 1.570796327]
+    velocity_limit: 10.47
+    torque_limit: 27.0
+  - name: right_wrist_roll_joint
+    mapping: direct
+    motors: [motor_alias_24]
+    position_limit: [-2.967059728, 2.967059728]
+    velocity_limit: 20.94
+    torque_limit: 7.0
+  - name: right_wrist_pitch_joint
+    mapping: direct
+    motors: [motor_alias_25]
+    position_limit: [-1.396263402, 1.396263402]
+    velocity_limit: 20.94
+    torque_limit: 7.0
+  - name: right_wrist_yaw_joint
+    mapping: direct
+    motors: [motor_alias_26]
+    position_limit: [-1.396263402, 1.396263402]
+    velocity_limit: 20.94
+    torque_limit: 7.0
+  couplings: []
+  imu: {enabled: false}
