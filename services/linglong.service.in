@@ -1,7 +1,9 @@
 [Unit]
 Description=SpacemiT LingLong @PROFILE_LABEL@ (profile=@PROFILE@)
 Wants=network-online.target
+Conflicts=@OTHER_SERVICE@
 After=network-online.target
+@PROFILE_ORDERING@
 
 [Service]
 Type=simple
