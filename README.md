@@ -151,34 +151,48 @@ App 工程与接口说明位于 common 的 `clients/android/` 和 `src/operator_
 
 ### K3 开机自启
 
-SDK、策略和机器人内网配置完成后，以日常操作用户安装服务，例如 `bianbu`：
+SDK、策略和机器人内网配置完成后，一次性安装两种服务，例如操作用户为 `bianbu`：
 
 ```bash
 cd ~/spacemit_robot
-sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu
-sudo --user root systemctl start linglong.service
+sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu --profile full
+sudo --user root systemctl start linglong@full.service
 ```
 
-安装命令只启用下次开机自启，不启动硬件；第二条命令启动当前会话。开机依次配置
-can0–can5（1 Mbps、restart 10 ms、发送队列 100），再调用 `run_linglong.sh --real`。
+安装器生成 `linglong@full.service` 和 `linglong@static.service`，只启用选定模式的开机自启，
+不立即启动硬件。两种服务互斥，切换时先停止旧进程再配置 CAN、启动新进程。
+全身模式开机依次配置 can0–can5（1 Mbps、restart 10 ms、发送队列 100），再调用
+`run_linglong.sh --real --profile full`。
 只有 driver 和 CAN 配置使用 root；control/HMI 使用指定普通用户，沿用其原二维码、
 凭据和 SDK 日志目录。不会自动上电、申请控制权或进入 RL。
 
-安装时可附带 `--listen 0.0.0.0 --public-url http://192.168.1.247:8765`，将手机访问
-地址保存到开机服务；省略时沿用所选 YAML 的 `operator_service` 配置。切换配置前先停止服务。
+首次安装时可附带 `--listen 0.0.0.0 --public-url http://192.168.1.247:8765`，地址须替换为实际
+机器人 IP。两种服务保存相同的手机访问地址；后续切换无需重复填写。升级安装时省略网络参数
+会继承已安装服务的设置；首次安装且不传网络参数时才使用 YAML 的 `operator_service` 配置。
 
 ```bash
-systemctl status linglong.service --no-pager
-journalctl -u linglong.service -b -n 80 --no-pager
+systemctl status 'linglong@*.service' --no-pager
+journalctl -u linglong@full.service -b -n 80 --no-pager
 run_hmi_tui_linglong.sh
-sudo --user root systemctl stop linglong.service
-sudo --user root systemctl disable linglong.service
+sudo --user root systemctl stop linglong@full.service
+sudo --user root systemctl disable linglong@full.service
 ```
 
 服务运行时，不再运行 `run_linglong.sh --real` 或临时 CAN 配置脚本；可独立打开
 TUI、网页或 App。需要手动调试三进程时先停止服务。任一核心进程退出会清理同组进程，
-不会自动重启硬件；排查后再手动启动服务。部署文件见 `services/`，安装只修改
-`linglong.service`，不会配置 sudo 免密规则。
+不会自动重启硬件；排查后再手动启动服务。`start/stop` 只影响本次运行；
+`enable/disable` 决定下次开机模式，不要同时启用两种模式。安装不会配置 sudo 免密规则。
+
+从旧版 `linglong.service` 升级时，先在客户端退到掉电并确保机器人有可靠支撑，然后只执行一次：
+
+```bash
+cd ~/spacemit_robot
+sudo --user root systemctl stop linglong.service
+sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu
+```
+
+安装器备份并移除旧服务，沿用原来的 static/full 模式及网络地址，启用对应的新服务但不启动。
+已有新服务时重新安装也须先停止运行中的实例；省略 `--profile` 会保留已启用的模式。
 
 ## 详细使用
 
@@ -189,23 +203,18 @@ TUI、网页或 App。需要手动调试三进程时先停止服务。任一核�
 `upper_body_actions` 目录和原 NPZ 文件，不加载 ONNX；不需要另外下载展示模型。
 双臂标定及限位见 `linglong_static_hardware.yaml`，动作增益采用 `stand_mjlab` 的双臂值。
 
-展示使用同一个 `linglong.service`，不另建并行控制服务。确认底座紧固、双腿断电、
-手臂和被动腿部周围没有人员或障碍物，一次性切换到静态展示自启动：
+确认底座紧固、双腿断电、手臂和被动腿部周围没有人员或障碍物，客户端退到掉电状态。
+服务安装完成后，切换到静态展示并设为下次开机默认：
 
 ```bash
-cd ~/spacemit_robot
-sudo --user root systemctl stop linglong.service
-sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu --profile static \
-  --listen 0.0.0.0 --public-url http://192.168.1.247:8765
-sudo --user root systemctl start linglong.service
-systemctl status linglong.service --no-pager
+sudo --user root systemctl disable --now linglong@full.service
+sudo --user root systemctl enable --now linglong@static.service
+systemctl status linglong@static.service --no-pager
 ```
 
-安装器会备份原服务配置，并启用下一次开机自启；`start` 用于本次立即启动。
-以后开机自动配置 can2/can3，再启动 driver、control 和 HMI，不需要执行 CAN 或 run 脚本，
-也不需要电脑或 TUI 在线。网络地址只在安装时配置一次，须匹配机器人路由器的固定内网。
-`systemctl status linglong.service` 的描述会显示 `fixed-base arms (profile=static)`；
-全身模式显示 `full-body RL (profile=full)`，启动命令和配置文件路径也对应所选模式。
+以后开机自动配置 can2/can3，再启动 driver、control 和 HMI，不需要执行 Python、CAN 或 run
+脚本，也不需要电脑或 TUI 在线。静态服务描述显示 `fixed-base arms (profile=static)`；
+全身服务显示 `full-body RL (profile=full)`。
 
 手机连接 `linglong` Wi-Fi，用原固定二维码或 Android App 连接。仍使用 `bianbu`
 用户的原凭据，地址不变时二维码不变。手动申请控制权，依次进入阻尼、复位、准备、动作，
@@ -220,16 +229,16 @@ run_hmi_tui_linglong.sh
 
 按 `L` 申请控制权，右箭头依次进入 `DAMP → HOME → ZERO → TRAJECTORY`；
 按 `A` 选动作，Enter 播放，`C` 取消，左箭头退 DAMP，`F` 失能。
-恢复全身模式时，先恢复全身供电、IMU 及相应保护条件，再切换同一个服务：
+恢复全身模式时，先退到掉电、恢复全身硬件及相应保护条件，再切换并更新开机默认模式：
 
 ```bash
-sudo --user root systemctl stop linglong.service
-sudo --user root ./output/staging/bin/install_linglong_service.py --user bianbu --profile full \
-  --listen 0.0.0.0 --public-url http://192.168.1.247:8765
-sudo --user root systemctl start linglong.service
+sudo --user root systemctl disable --now linglong@static.service
+sudo --user root systemctl enable --now linglong@full.service
 ```
 
-两种模式使用相同硬件占用锁，不能同时启动。静态模式不支持 `--sim`；无硬件检查可运行
+临时启停某一模式可直接使用 `systemctl start/stop linglong@static.service` 或
+`linglong@full.service`，不会改变下次开机设置。两种模式使用相同硬件占用锁，不能同时运行。
+静态模式不支持 `--sim`；无硬件检查可运行
 `test_trajectory application/native/humanoid_linglong/config/linglong_static.yaml`，该检查只验证
 状态和目标生成，不验证机械稳定性或实际电机响应。
 
