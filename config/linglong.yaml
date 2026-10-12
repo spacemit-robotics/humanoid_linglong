@@ -56,6 +56,8 @@ operator_service:
   bind_address: "127.0.0.1"
   port: 8765
   lease_ms: 1000
+  voice_chat_port: 8442
+  admin_password_hash: "pbkdf2-sha256:100000:ba642be7cf2af554c570f649cfc28e1d:7756c354d74b69339eb632c0c7fee7d1bab01530f4ae6bef87658a532c813954"
 
 whole_body:
   config_file: "linglong_hardware.yaml"

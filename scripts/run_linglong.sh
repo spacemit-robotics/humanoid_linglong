@@ -204,6 +204,7 @@ check_children() {
 
 echo "启动灵龙 ${MODE#--}；日志：$LOG_DIR"
 [[ "$PROFILE" != static ]] || echo "固定底座展示：仅双臂 14 关节，无腿部/头部控制，无 IMU 或 RL。"
+[[ "$PROFILE" != static ]] || echo "按配置执行自动准备；请确认双臂运动范围内无人、无障碍物。"
 start driver "$BIN/run_driver_linglong.sh" "$MODE"
 start control "$BIN/run_control_linglong.sh"
 start hmi "$BIN/run_hmi_linglong.sh" "${HMI_ARGS[@]}"
@@ -218,7 +219,7 @@ while :; do
     fi
     sleep 0.2
 done
-echo "三个核心进程已启动，HMI 与 control 已连通；不会自动上电。"
+echo "三个核心进程已启动，HMI 与 control 已连通。"
 if [[ "$MODE" == --real ]]; then
     sed -n '/^\[hmi\]/p' "$LOG_DIR/hmi.log"
 fi

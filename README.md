@@ -74,7 +74,7 @@ download_models_linglong.sh
 ### 运行示例
 
 同一份 `config/linglong.yaml` 支持仿真与实机。一键脚本通过 `--sim` / `--real` 同时选择
-driver 后端与 HMI 接入模式，不改 YAML、不自动上电。
+driver 后端与 HMI 接入模式，不改 YAML；全身模式不自动上电。
 
 ```bash
 run_linglong.sh --sim    # 三个核心进程和原终端 TUI；不提供网页、App 或二维码
@@ -127,19 +127,20 @@ Wi-Fi。不使用开发 PC/虚拟机地址，也不依赖展会网络给机器�
 run_linglong.sh --real --listen 0.0.0.0 --public-url http://192.168.1.247:8765
 ```
 
-Android App 或手机浏览器扫码后手动申请控制权；先释放原终端的控制权再切换客户端。
+扫码首页默认语音；手动控制由页面下方管理员入口进入，登录后再申请控制权。
+TUI/MCP 使用本机私有连接文件，不需要网页管理员密码。
 展示部署时，将 `operator_service.bind_address` 和 `public_url` 配置一次；后续仍运行
 `run_hmi_linglong.sh`，不需要可见终端。`public_url` 应使用固定 IP 或可解析的固定主机名。
 固定二维码包含连接凭据，扫码自动配对，不用手填凭据；地址和凭据不变时跨重启仍有效。
 服务会自动导出 `~/.local/state/humanoid-operator/linglong/access.svg`，可打印交给受信任
-操作者，也可从网页右上角下载。二维码等同操作钥匙，不应公开发布。离线导出命令：
+操作者，也可从网页右上角下载。二维码用于访问语音及状态，不包含管理员权限。离线导出命令：
 
 ```bash
 run_hmi_linglong.sh --real --export-pairing --public-url http://192.168.1.247:8765
 ```
 
-手机扫码连接后手动申请控制权，不会自动上电。仿真不提供网页或扫码接口；
-本版本没有公网远控或 TLS。
+扫码本身不会上电；静态展示的自动准备由服务启动配置决定。仿真不提供网页或扫码接口。
+语音服务为网页提供 HTTPS，HMI 的 HTTP/WS 只用于可信机器人内网，不应暴露公网。
 App 工程与接口说明位于 common 的 `clients/android/` 和 `src/operator_service/`。
 部署 APK 后，扫码打开的控制页同时提供“下载 Android App”；下载与控制共用 HMI 的
 8765 端口，不需要额外的下载进程。安装后在 App 扫描同一张二维码即可配对。
@@ -164,7 +165,7 @@ sudo --user root systemctl start linglong@full.service
 全身模式开机依次配置 can0–can5（1 Mbps、restart 10 ms、发送队列 100），再调用
 `run_linglong.sh --real --profile full`。
 只有 driver 和 CAN 配置使用 root；control/HMI 使用指定普通用户，沿用其原二维码、
-凭据和 SDK 日志目录。不会自动上电、申请控制权或进入 RL。
+凭据和 SDK 日志目录。全身模式不会自动上电、申请控制权或进入 RL。
 
 首次安装时可附带 `--listen 0.0.0.0 --public-url http://192.168.1.247:8765`，地址须替换为实际
 机器人 IP。两种服务保存相同的手机访问地址；后续切换无需重复填写。升级安装时省略网络参数
@@ -216,9 +217,14 @@ systemctl status linglong@static.service --no-pager
 脚本，也不需要电脑或 TUI 在线。静态服务描述显示 `fixed-base arms (profile=static)`；
 全身服务显示 `full-body RL (profile=full)`。
 
-手机连接 `linglong` Wi-Fi，用原固定二维码或 Android App 连接。仍使用 `bianbu`
-用户的原凭据，地址不变时二维码不变。手动申请控制权，依次进入阻尼、复位、准备、动作，
-准备姿态到位后才允许播放动作；完成或取消会平滑回准备姿态。启动不会自动使能或播放动作。
+手机连接 `linglong` Wi-Fi，用语音二维码或 Android App 连接。地址不变时二维码不变。
+静态配置启用 `trajectory.prepare_on_start`：反馈有效后自动使能双臂，执行 HOME、ZERO 并进入动作待命，
+不自动播放。每次启动前必须清空手臂运动范围。故障或人工停止会中止自动准备，不自动重新上电。
+全身模式仍由操作者手动切换，不启用自动准备。
+
+网页下方管理员入口验证 `operator_service.admin_password_hash`，配置只保存带盐摘要。
+方块按钮和 TUI `C` 均取消动作并缓慢回到准备姿态，保持使能和增益；回程至少 2 秒，
+必要时按最大目标速度 0.6 rad/s 延长。通信、电机及越限保护仍可能安全失能，不能用取消动作替代物理急停。
 
 调试时可在服务运行期间连接 TUI，不要再启动第二套核心进程：
 
@@ -227,8 +233,8 @@ source build/envsetup.sh
 run_hmi_tui_linglong.sh
 ```
 
-按 `L` 申请控制权，右箭头依次进入 `DAMP → HOME → ZERO → TRAJECTORY`；
-按 `A` 选动作，Enter 播放，`C` 取消，左箭头退 DAMP，`F` 失能。
+自动准备完成后按 `L` 申请控制权，`A` 选动作，Enter 播放，`C` 取消，左箭头退 DAMP，`F` 失能。
+人工停止后需手动按 `DAMP → HOME → ZERO → TRAJECTORY` 恢复，不自动重试。
 恢复全身模式时，先退到掉电、恢复全身硬件及相应保护条件，再切换并更新开机默认模式：
 
 ```bash
