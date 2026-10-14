@@ -64,6 +64,7 @@ logging:
     enabled: true
     max_size_mb: 32
     max_files: 3
+    retention_days: 3
   queue_capacity: 8192
   telemetry:
     enabled: true

@@ -84,6 +84,8 @@ run_linglong.sh --sim    # 三个核心进程和原终端 TUI；不提供网页�
 进程。三个进程的标准输出和错误输出保存在 YAML 的 `logging.directory` 下的
 `linglong_launch_*/driver.log`、`control.log`、`hmi.log`；默认根目录为 SDK 的
 `log/humanoid/`，与原 `events.log`、CSV 日志统一存放。原运行日志的会话目录不变。
+灵龙配置默认 `logging.file.retention_days: 3`，runtime 启动时自动删除 3 天前的
+`linglong_*` 会话目录（含 `linglong_launch_*`）；设为 0 可关闭。
 仅启动核心进程可加 `--no-tui`，再单独执行 `run_hmi_tui_linglong.sh`。
 
 **FSM 完整仿真（三个核心进程，另开终端客户端）**：

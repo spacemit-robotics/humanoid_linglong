@@ -25,7 +25,7 @@ logging:
   level: debug
   directory: ../../../../log/humanoid
   console: {enabled: true}
-  file: {enabled: true, max_size_mb: 128, max_files: 8}
+  file: {enabled: true, max_size_mb: 128, max_files: 8, retention_days: 3}
   queue_capacity: 8192
   artifacts: [linglong_static_hardware.yaml, linglong.yaml]
   telemetry: {enabled: true, rate_hz: 20, control_rate_hz: 50, hardware_rate_hz: 100, timing_window_s: 5}
