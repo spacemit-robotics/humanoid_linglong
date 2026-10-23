@@ -148,6 +148,10 @@ App 工程与接口说明位于 common 的 `clients/android/` 和 `src/operator_
 8765 端口，不需要额外的下载进程。安装后在 App 扫描同一张二维码即可配对。
 旧 ROS 2 语音 HMI 尚未迁移，不能同时作为内部 HMI 写端启动。
 
+网页语音的构建、证书、启动和开机自启见 [网页语音部署](docs/voice.md)。
+机型人设及动作白名单在 `config/linglong_voice.json.in`；启动入口为
+`run_linglong_voice.sh`，通用 MCP 程序由 common 构建，不再依赖独立 MCP 应用仓库。
+
 日常启动无需额外 export。仅测试自定义配置时可使用 `LINGLONG_CONFIG` / `OPERATOR_CONNECTION`。
 连接文件与凭据默认位于当前用户的 `~/.local/state/humanoid-operator/linglong/`，
 服务与客户端使用同一普通用户，不使用 root 启动 HMI。
