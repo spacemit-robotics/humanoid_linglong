@@ -3,6 +3,7 @@ project(humanoid_linglong)
 
 install(PROGRAMS
     scripts/run_linglong.sh
+    scripts/run_linglong_voice.sh
     scripts/configure_can_linglong.sh
     scripts/install_linglong_service.py
     scripts/run_driver_linglong.sh
@@ -15,3 +16,5 @@ install(PROGRAMS
 )
 
 install(FILES services/linglong.service.in DESTINATION share/humanoid_linglong)
+install(FILES config/linglong_voice.json.in services/linglong-voice.service.in
+    DESTINATION share/humanoid_linglong)

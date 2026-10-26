@@ -1,0 +1,18 @@
+# 灵龙控制台语音模式的 systemd 用户服务模板，由 scripts/run_linglong_voice.sh autostart-on 填好路径装到
+# ~/.config/systemd/user/linglong-voice.service（配合 linger 开机自启）。和灵龙的 linglong@.service 互不依赖：
+# 开机时灵龙服务还没就绪，本服务启动失败后 15 s 重试；没网时本服务照常运行，由 ptt_server 每 15 s 重启 ptt_chat。
+[Unit]
+Description=LingLong console voice mode (@SDK@)
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Environment="SDK_ROOT=@SDK@" "STAGING_PREFIX=@PREFIX@"
+ExecStart=@SCRIPT@ run
+Restart=always
+RestartSec=15
+KillMode=mixed
+TimeoutStopSec=15
+
+[Install]
+WantedBy=default.target
