@@ -71,7 +71,6 @@ logging:
     enabled: true
     max_size_mb: 128
     max_files: 8
-    retention_days: 3
   queue_capacity: 8192
   artifacts:
     - "linglong_hardware.yaml"
