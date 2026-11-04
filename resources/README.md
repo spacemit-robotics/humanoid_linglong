@@ -84,7 +84,14 @@ python -m mujoco.viewer --mjcf resources/xml/scene_picker.xml
 
 ### 夹爪资源许可与来源
 
-夹爪资源许可标识为 `Apache-2.0`，依据为资源提供者于 2026-11-04 确认已核查可按该许可使用。
-网格转换来源、SHA256 和本次许可确认记录见 `grasp/meshes/provenance.json`；
-该记录属于提供者确认，本次整理没有独立复核原始授权材料，也不是从下载地址或仓库许可推定授权。
-应保留源文件版权、来源及适用的 NOTICE 内容；网格转为 OBJ 的过程没有简化或改变原始顶点。
+2026-11-04 从官方手册的 `OP1_URDF` 入口重新下载 `robot_description.zip`，
+核对包内 `robot_description/package.xml` 明确声明 `<license>Apache-2.0</license>`。
+原始声明文件未经修改存档于 [robot_description.package.xml](grasp/meshes/license_evidence/robot_description.package.xml)。
+压缩包、原始 `base_link.STL` 和 URDF 的 SHA256 均与已有来源记录一致；
+证据文件 SHA256、下载地址、核验日期和转换记录见 [provenance.json](grasp/meshes/provenance.json)
+及 [omnipicker_spec.json](grasp/omnipicker_spec.json)。
+
+官方包未包含独立的 LICENSE 或 NOTICE 文件；这里记录的是官方包的许可声明核验，
+不是从下载地址、SDK 许可、OmniHand O10 的许可或本仓库许可推定模型授权。
+Apache-2.0 全文见仓库根目录 [LICENSE](../LICENSE)。保留来源、原有版权及适用声明；
+STL 转为 OBJ 的转换已明确记录，没有简化或改变原始顶点。

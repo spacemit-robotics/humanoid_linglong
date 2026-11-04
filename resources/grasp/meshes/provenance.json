@@ -10,15 +10,25 @@
   "source_information_url": "https://www.agibot.com.cn/filepage/283.html",
   "usage": "Visual-only gripper base mesh; primitive collision geometry and proxy fingers are defined in the MJCF",
   "redistribution": {
-    "status": "confirmed_by_user",
+    "status": "verified_official_package_metadata",
     "license": "Apache-2.0",
     "permission_evidence": {
-      "type": "user_confirmation",
+      "type": "official_archive_package_metadata",
       "date": "2026-11-04",
-      "statement": "User confirmed that the supplied gripper files were checked and may be used under Apache-2.0.",
-      "independently_verified_in_this_review": false
+      "archive_url": "https://www.agibot.com.cn/file/ueditor/php/upload/file/20250114/robot_description.zip",
+      "archive_sha256": "ab379eac6f8997fceca5dbc139cb6ccf8ae26e52f7791795f67ac3b2849132f5",
+      "archive_member": "robot_description/package.xml",
+      "archived_file": "resources/grasp/meshes/license_evidence/robot_description.package.xml",
+      "sha256": "bf797a250a2fbdf30fdea2881e3ff954872887bc78a57b13bad0c9c5401acffa",
+      "source_mesh_member": "robot_description/meshes/base_link.STL",
+      "source_mesh_sha256_matches": true,
+      "official_urdf_sha256_matches": true,
+      "statement": "The official OmniPicker URDF archive declares Apache-2.0 in robot_description/package.xml. The archive, source mesh and URDF SHA256 values match the recorded source. The package.xml evidence is archived without modification.",
+      "independently_verified_in_this_review": true,
+      "standalone_license_file_present": false,
+      "standalone_notice_file_present": false
     },
     "publication_blocked": false,
-    "note": "License recorded on the basis of the user's verification, not inferred from the download URL or the repository license. Preserve source copyright, attribution and any applicable NOTICE content."
+    "note": "License identification is based on the official package metadata, not on user confirmation, download availability, the SDK license or the repository license. The official archive contains no standalone LICENSE or NOTICE file; its package.xml declaration is the archived evidence. The repository root LICENSE supplies the Apache-2.0 text. Preserve source copyright, attribution and any applicable notices; the STL-to-OBJ conversion is recorded above."
   }
 }
