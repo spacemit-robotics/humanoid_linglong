@@ -1,0 +1,24 @@
+{
+  "source_filename": "base_link.STL",
+  "source_sha256": "4eb1c9baab9440c4726e99afb330633e66d541f8eb12ac3a0acf426d21b677cc",
+  "output_sha256": "deda5bb6bafef78ed8866a81991589d0be13e234cad582857f9ae7d80fa16971",
+  "triangles": 226705,
+  "vertices": 108897,
+  "conversion": "binary STL to OBJ, exact float32 vertices, no decimation",
+  "output_file": "resources/meshes/omni_picker_base.obj",
+  "source_description": "User-supplied OmniPicker base_link.STL; official archive and URDF hashes are recorded in resources/grasp/omnipicker_spec.json",
+  "source_information_url": "https://www.agibot.com.cn/filepage/283.html",
+  "usage": "Visual-only gripper base mesh; primitive collision geometry and proxy fingers are defined in the MJCF",
+  "redistribution": {
+    "status": "confirmed_by_user",
+    "license": "Apache-2.0",
+    "permission_evidence": {
+      "type": "user_confirmation",
+      "date": "2026-11-04",
+      "statement": "User confirmed that the supplied gripper files were checked and may be used under Apache-2.0.",
+      "independently_verified_in_this_review": false
+    },
+    "publication_blocked": false,
+    "note": "License recorded on the basis of the user's verification, not inferred from the download URL or the repository license. Preserve source copyright, attribution and any applicable NOTICE content."
+  }
+}

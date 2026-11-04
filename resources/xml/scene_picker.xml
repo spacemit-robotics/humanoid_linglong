@@ -1,0 +1,56 @@
+<!-- Symmetric two-arm tabletop layout; parallel_proxy_v1, not an exact real gripper.
+     Physical objects, no object attachment. Resource preview, not whole-body acceptance. -->
+<mujoco model="LingLong_L1_V1.4 picker scene (parallel gripper proxy)">
+  <compiler angle="radian" meshdir="../meshes/" />
+  <include file="LingLong_L1_V1.4_picker.xml" />
+  <option cone="elliptic" impratio="10" tolerance="1e-10" />
+  <statistic center="0.35 0 0.85" extent="1.6" />
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.1 0.1 0.1" specular="0.9 0.9 0.9" />
+    <rgba haze="0.15 0.25 0.35 1" />
+    <global azimuth="-140" elevation="-20" offwidth="640" offheight="480" />
+    <map znear="0.005" zfar="10" />
+    <quality offsamples="0" />
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="512" />
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300" />
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2" />
+  </asset>
+  <worldbody>
+    <light pos="1 0 3.5" dir="0 0 -1" directional="true" />
+    <geom name="floor" size="200 200 5" type="plane" group="0" material="groundplane" friction="0.6 0.005 0.0001" />
+    <body name="table" pos=".70 0 0">
+      <geom name="table_top" type="box" pos="0 0 0.875" size="0.30 0.55 0.025" group="0" rgba="0.57 0.38 0.22 1" friction="0.8 0.005 0.0001" />
+      <geom name="table_leg_nn" type="box" pos="-0.25 -0.49 0.425" size="0.025 0.025 0.425" group="0" rgba="0.25 0.27 0.30 1" />
+      <geom name="table_leg_np" type="box" pos="-0.25 0.49 0.425" size="0.025 0.025 0.425" group="0" rgba="0.25 0.27 0.30 1" />
+      <geom name="table_leg_pn" type="box" pos="0.25 -0.49 0.425" size="0.025 0.025 0.425" group="0" rgba="0.25 0.27 0.30 1" />
+      <geom name="table_leg_pp" type="box" pos="0.25 0.49 0.425" size="0.025 0.025 0.425" group="0" rgba="0.25 0.27 0.30 1" />
+    </body>
+    <camera name="scene_overview" pos="2.4 -2.6 2.0" xyaxes="0.785 0.619 0 -0.232 0.295 0.927" fovy="50" />
+    <body name="sort_object_red" pos="0.43 0.36 0.927">
+      <freejoint name="sort_object_red_free" />
+      <geom name="sort_object_red_geom" type="box" size="0.025 0.025 0.025" mass="0.08" rgba="0.85 0.12 0.055 1" group="0" condim="4" friction="0.8 0.005 0.0001" solref="0.01 1" />
+    </body>
+    <body name="sort_object_blue" pos="0.43 -0.36 0.927">
+      <freejoint name="sort_object_blue_free" />
+      <geom name="sort_object_blue_geom" type="box" size="0.025 0.025 0.025" mass="0.08" rgba="0.055 0.12 0.85 1" group="0" condim="4" friction="0.8 0.005 0.0001" solref="0.01 1" />
+    </body>
+    <body name="sort_tray_red" pos="0.52 0.36 0.9">
+      <geom name="sort_tray_red_floor" type="box" pos="0 0 0.002" size="0.055 0.055 0.002" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_red_front" type="box" pos="-0.053 0 0.008" size="0.002 0.055 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_red_back" type="box" pos="0.053 0 0.008" size="0.002 0.055 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_red_near" type="box" pos="0 -0.053 0.008" size="0.051 0.002 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_red_far" type="box" pos="0 0.053 0.008" size="0.051 0.002 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <site name="sort_slot_red" type="box" pos="0 0 0.0045" size="0.035 0.045 0.0005" rgba="0.05 0.8 0.05 1" group="2" />
+    </body>
+    <body name="sort_tray_blue" pos="0.52 -0.36 0.9">
+      <geom name="sort_tray_blue_floor" type="box" pos="0 0 0.002" size="0.055 0.055 0.002" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_blue_front" type="box" pos="-0.053 0 0.008" size="0.002 0.055 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_blue_back" type="box" pos="0.053 0 0.008" size="0.002 0.055 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_blue_near" type="box" pos="0 -0.053 0.008" size="0.051 0.002 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <geom name="sort_tray_blue_far" type="box" pos="0 0.053 0.008" size="0.051 0.002 0.004" rgba="0.35 0.35 0.35 1" group="0" friction="0.8 0.005 0.0001" />
+      <site name="sort_slot_blue" type="box" pos="0 0 0.0045" size="0.035 0.045 0.0005" rgba="0.05 0.8 0.8 1" group="2" />
+    </body>
+  </worldbody>
+</mujoco>
