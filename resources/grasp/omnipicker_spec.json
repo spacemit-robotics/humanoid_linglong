@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "retrieved_on": "2026-10-27",
+  "manual_url": "https://www.agibot.com.cn/filepage/283.html",
+  "manual_hardware_version": "1.2",
+  "manual_software_version": "3.3.5",
+  "official_urdf_url": "https://www.agibot.com.cn/file/ueditor/php/upload/file/20250114/robot_description.zip",
+  "official_archive_sha256": "ab379eac6f8997fceca5dbc139cb6ccf8ae26e52f7791795f67ac3b2849132f5",
+  "official_urdf_sha256": "0a4967aedf5b431dd333f0886659ada9e1f598bc97dee937da95bd52f78cbbba",
+  "official_urdf_matches_supplied": true,
+  "official": {
+    "active_dofs": 1,
+    "mass_kg": 0.43,
+    "maximum_stroke_m": 0.12,
+    "maximum_clamping_force_n": 30,
+    "recommended_payload_kg": 1.5,
+    "typical_open_close_time_s": 0.7,
+    "repeatability_m": 0.00005,
+    "normalized_position_closed": 0,
+    "normalized_position_open": 1
+  },
+  "proxy_assumptions": {
+    "model": "two slider coordinates synchronized by a joint equality, one average fixed-tendon position drive per hand; not a passive differential or recovered linkage",
+    "maximum_inner_opening_m": 0.12,
+    "minimum_inner_opening_m": 0,
+    "tendon_coefficient_per_finger": 0.5,
+    "actuator_force_limit_n": 30,
+    "maximum_generalized_drive_force_per_finger_n": 15,
+    "command_rate_limit_normalized_per_s": 1.4285714285714286,
+    "tcp_z_m": 0.16,
+    "friction_sliding": 1.0,
+    "mass_distribution": "source base 0.25641368 kg; remaining mass split equally between proxy fingers",
+    "force_interpretation": "30 N is conservatively budgeted as sum of absolute finger drive forces; official per-finger/total definition unresolved",
+    "timing_interpretation": "0.7 s is nominal, not a measured hard speed bound; command rate is a proxy design choice",
+    "stroke_interpretation": "120 mm is interpreted as full inner opening for this proxy only, not a calibrated linkage mapping",
+    "force_cmd_is_newtons": false,
+    "simulates_self_lock": false,
+    "simulates_actual_adaptive_linkage": false,
+    "exact_real_gripper": false
+  }
+}
