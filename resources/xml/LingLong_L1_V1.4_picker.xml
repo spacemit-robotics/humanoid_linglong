@@ -43,7 +43,7 @@
       <inertial pos="-0.004943 0.003037 0.104651" quat="0.999889 -0.000412984 -0.0138862 -0.0053236" mass="20.6804" diaginertia="0.651816 0.509434 0.232097" />
       <joint name="floating_base_joint" type="free" />
       <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="base_link" />
-      <geom size="0.075 0.125 0.25" pos="0 0 0.3" type="box" rgba="1 1 1 1" />
+      <geom size="0.075 0.125 0.125" pos="0 0 0.175" type="box" rgba="1 1 1 1" />
       <body name="left_hip_pitch_link" pos="0 0.11655 -0.077">
         <inertial pos="-0.084164 0.017857 -0.033361" quat="0.598881 0.223776 0.593448 0.488963" mass="2.80157" diaginertia="0.0184164 0.0164788 0.00698685" />
         <joint name="left_hip_pitch_joint" pos="0 0 0" axis="0 1 0" range="-1.5708 0.785398" actuatorfrcrange="-330 330" armature="0.125601507333" />

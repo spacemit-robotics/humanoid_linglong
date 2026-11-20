@@ -63,10 +63,10 @@
     </visual>
     <collision>
       <origin
-        xyz="0 0 0.3"
+        xyz="0 0 0.175"
         rpy="0 0 0" />
       <geometry>
-        <box size="0.15 0.25 0.5"/>
+        <box size="0.15 0.25 0.25"/>
       </geometry>
     </collision>
   </link>
