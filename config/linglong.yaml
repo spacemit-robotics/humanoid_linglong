@@ -972,7 +972,7 @@ rl_policy:
       supermimic:
         # Static-standing checkpoint; requires the SuperMimic PolicyAdapter in common.
         # Resources follow the same policy/<name>/ layout as the other policies.
-        model_path: "policy/supermimic/policy.onnx"
+        model_path: "policy/supermimic/decoder.onnx"
         runtime:
           provider: cpu
           threads: 1
@@ -980,7 +980,7 @@ rl_policy:
         model_io:
           inputs:
             - {name: obs_hist, source: observation}
-            - {name: goal, source: external, key: supermimic_goal}
+            - {name: z, source: external, key: supermimic_latent}
           outputs:
             - {name: actions, target: action}
         # This export uses LingLong canonical joint order for all 28 joints.
@@ -1026,6 +1026,8 @@ rl_policy:
           strict_dim_check: true
         policy_adapter:
           type: supermimic
+          encoder:
+            model_path: "policy/supermimic/encoder.onnx"
           # Ten identical upright goals; no additional reference-motion resource.
           reference_height: 0.9634
         command:
